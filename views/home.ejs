@@ -1,55 +1,396 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="home-page">
 <head>
-    <%- include('./partials/head') %>
+    <%- include('partials/head') %>
     <title>Homepage</title>
+    <style>
+        /* Professional layout styles for the homepage */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Category cards styling */
+        .category-card {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .category-card:hover {
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-header {
+            padding: 15px 20px;
+            border-bottom: none;
+        }
+        
+        .category-title {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .category-body {
+            padding: 20px;
+        }
+        
+        /* Blog cards styling */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .blog-card {
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: var(--card-bg);
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-img-top {
+            height: 180px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .blog-card:hover .card-img-top {
+            transform: scale(1.05);
+        }
+        
+        .blog-body {
+            padding: 20px;
+        }
+        
+        .blog-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            color: var(--text-color);
+        }
+        
+        .blog-text {
+            color: var(--muted-color);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .category-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            border-radius: 30px;
+            padding: 5px 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        .blog-footer {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            background-color: rgba(0, 0, 0, 0.01);
+            font-size: 0.85rem;
+            color: var(--muted-color);
+        }
+        
+        .blog-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .btn-action {
+            padding: 7px 15px;
+            font-size: 0.875rem;
+            border-radius: 6px;
+        }
+        
+        /* Dark mode enhancements */
+        [data-theme="dark"] .category-card {
+            background-color: var(--card-bg);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        [data-theme="dark"] .blog-card {
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        [data-theme="dark"] .blog-footer {
+            background-color: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
 </head>
 <body>
-    <%- include('./partials/nav') %>
-    <div class="container mt-4">
-        <!-- Loop through each category -->
-        <% Object.keys(blogsByCategory).forEach(category => { %>
-            <div class="card mb-4">
-                <!-- Category Header with Dynamic Color -->
-                <div class="card-header text-white" style="background-color: <%= categoryColors[category] %>;">
-                    <h3 class="card-title mb-0"><%= category %></h3>
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-lg-12 text-center mb-5">
+                <h1 class="display-4 fw-bold">Welcome to BlogApp</h1>
+                <p class="lead">Discover interesting stories and share your thoughts</p>
+            </div>
+        </div>
+
+        <!-- Categories Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="category-tabs">
+                    <ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-all-tab" data-bs-toggle="pill" data-bs-target="#pills-all" type="button" role="tab" aria-controls="pills-all" aria-selected="true">All Posts</button>
+                        </li>
+                        <% Object.keys(blogsByCategory).forEach(function(category, index) { %>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" 
+                                    id="pills-<%= category.toLowerCase() %>-tab" 
+                                    data-bs-toggle="pill" 
+                                    data-bs-target="#pills-<%= category.toLowerCase() %>" 
+                                    type="button" 
+                                    role="tab" 
+                                    aria-controls="pills-<%= category.toLowerCase() %>" 
+                                    aria-selected="false"
+                                    style="color: <%= categoryColors[category] %>;">
+                                    <%= category %>
+                                </button>
+                            </li>
+                        <% }); %>
+                    </ul>
                 </div>
-                <div class="card-body">
-                    <div class="row row-cols-1 row-cols-md-3 g-4">
-                        <!-- Loop through blogs in this category -->
-                        <% blogsByCategory[category].forEach(blog => { %>
-                            <div class="col">
-                                <div class="card h-100">
-                                    <!-- Blog Cover Image -->
-                                    <img src="<%= blog.coverImageURL %>" class="card-img-top" alt="<%= blog.title %>">
+            </div>
+        </div>
 
-                                    <!-- Blog Content -->
+        <!-- Blogs Section -->
+        <div class="tab-content" id="pills-tabContent">
+            <!-- All Blogs Tab -->
+            <div class="tab-pane fade show active" id="pills-all" role="tabpanel" aria-labelledby="pills-all-tab">
+                <div class="row">
+                    <% let allBlogs = []; %>
+                    <% Object.values(blogsByCategory).forEach(blogs => { allBlogs = allBlogs.concat(blogs); }); %>
+                    
+                    <% if (allBlogs.length === 0) { %>
+                        <div class="col-12 text-center py-5">
+                            <div class="empty-state">
+                                <i class="fas fa-newspaper fa-4x mb-3 text-muted"></i>
+                                <h3>No blogs yet</h3>
+                                <p class="mb-4">Be the first to share your thoughts with the community!</p>
+                                <% if (locals.user) { %>
+                                    <a href="/blog/add-new" class="btn btn-primary">Create Your First Blog</a>
+                                <% } else { %>
+                                    <a href="/user/signin" class="btn btn-primary">Sign In to Start Blogging</a>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <% allBlogs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).forEach(function(blog) { %>
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100 blog-card">
+                                    <img src="<%= blog.coverImageURL %>" class="card-img-top" alt="<%= blog.title %>"
+                                        onerror="this.onerror=null; this.src='/images/default-cover.jpg';">
                                     <div class="card-body">
-                                        <!-- Blog Title -->
-                                        <h5 class="card-title"><%= blog.title %></h5>
-
-                                        <!-- Blog Body Excerpt -->
-                                        <p class="card-text"><%= blog.body.substring(0, 100) %>...</p>
-
-                                        <!-- Blog Category with Dynamic Color -->
-                                        <p class="text-muted">Category: 
-                                            <span class="badge" style="background-color: <%= categoryColors[blog.category] %>;">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge" style="background-color: <%= categoryColors[blog.category] || '#6c757d' %>;">
                                                 <%= blog.category %>
                                             </span>
+                                            <small class="text-muted">
+                                                <%= new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                                            </small>
+                                        </div>
+                                        <h5 class="card-title">
+                                            <a href="/blog/<%= blog._id %>" class="text-decoration-none stretched-link">
+                                                <%= blog.title %>
+                                            </a>
+                                        </h5>
+                                        <p class="card-text blog-excerpt">
+                                            <%= blog.body.replace(/<[^>]*>?/gm, '').substring(0, 120) %>...
                                         </p>
-
-                                        <!-- Read More Button -->
-                                        <a href="/blog/<%= blog._id %>" class="btn btn-primary">Read More</a>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-top-0">
+                                        <div class="d-flex align-items-center">
+                                            <img src="<%= blog.createdBy.profileImageURL %>" 
+                                                class="rounded-circle me-2" 
+                                                alt="<%= blog.createdBy.fullName %>"
+                                                width="30" height="30"
+                                                onerror="this.onerror=null; this.src='/images/avatar.avif';">
+                                            <small class="text-muted">
+                                                <%= blog.createdBy.fullName %>
+                                            </small>
+                                            <div class="ms-auto">
+                                                <small class="text-muted me-2">
+                                                    <i class="far fa-thumbs-up"></i> <%= blog.likes ? blog.likes.length : 0 %>
+                                                </small>
+                                                <small class="text-muted">
+                                                    <i class="far fa-comment"></i> <%= blog.comments ? blog.comments.length : 0 %>
+                                                </small>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        <% }) %>
-                    </div>
+                        <% }); %>
+                    <% } %>
                 </div>
             </div>
-        <% }) %>
+
+            <!-- Category Tabs -->
+            <% Object.keys(blogsByCategory).forEach(function(category) { %>
+                <div class="tab-pane fade" id="pills-<%= category.toLowerCase() %>" role="tabpanel" aria-labelledby="pills-<%= category.toLowerCase() %>-tab">
+                    <div class="row">
+                        <% if (blogsByCategory[category].length === 0) { %>
+                            <div class="col-12 text-center py-5">
+                                <div class="empty-state">
+                                    <i class="fas fa-folder-open fa-4x mb-3 text-muted"></i>
+                                    <h3>No <%= category %> blogs yet</h3>
+                                    <p class="mb-4">Be the first to write about <%= category %>!</p>
+                                    <% if (locals.user) { %>
+                                        <a href="/blog/add-new" class="btn btn-primary">Write a <%= category %> Blog</a>
+                                    <% } else { %>
+                                        <a href="/user/signin" class="btn btn-primary">Sign In to Start Blogging</a>
+                                    <% } %>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <% blogsByCategory[category].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).forEach(function(blog) { %>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100 blog-card">
+                                        <img src="<%= blog.coverImageURL %>" class="card-img-top" alt="<%= blog.title %>"
+                                            onerror="this.onerror=null; this.src='/images/default-cover.jpg';">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="badge" style="background-color: <%= categoryColors[category] || '#6c757d' %>;">
+                                                    <%= category %>
+                                                </span>
+                                                <small class="text-muted">
+                                                    <%= new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                                                </small>
+                                            </div>
+                                            <h5 class="card-title">
+                                                <a href="/blog/<%= blog._id %>" class="text-decoration-none stretched-link">
+                                                    <%= blog.title %>
+                                                </a>
+                                            </h5>
+                                            <p class="card-text blog-excerpt">
+                                                <%= blog.body.replace(/<[^>]*>?/gm, '').substring(0, 120) %>...
+                                            </p>
+                                        </div>
+                                        <div class="card-footer bg-transparent border-top-0">
+                                            <div class="d-flex align-items-center">
+                                                <img src="<%= blog.createdBy.profileImageURL %>" 
+                                                    class="rounded-circle me-2" 
+                                                    alt="<%= blog.createdBy.fullName %>"
+                                                    width="30" height="30"
+                                                    onerror="this.onerror=null; this.src='/images/avatar.avif';">
+                                                <small class="text-muted">
+                                                    <%= blog.createdBy.fullName %>
+                                                </small>
+                                                <div class="ms-auto">
+                                                    <small class="text-muted me-2">
+                                                        <i class="far fa-thumbs-up"></i> <%= blog.likes ? blog.likes.length : 0 %>
+                                                    </small>
+                                                    <small class="text-muted">
+                                                        <i class="far fa-comment"></i> <%= blog.comments ? blog.comments.length : 0 %>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } %>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
     </div>
-    <%- include('./partials/footer') %>
-   
+
+    <style>
+    /* Category tab styles */
+    .nav-pills .nav-link {
+        border-radius: 25px;
+        padding: 8px 20px;
+        margin: 0 5px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .nav-pills .nav-link:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    [data-theme="dark"] .nav-pills .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-pills .nav-link.active {
+        background-color: var(--primary);
+        color: white !important;
+    }
+
+    /* Blog card styles */
+    .blog-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+    }
+
+    .blog-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] .blog-card:hover {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .blog-card .card-img-top {
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .blog-card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+
+    .blog-excerpt {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 4.5em;
+    }
+
+    /* Empty state styles */
+    .empty-state {
+        padding: 3rem;
+        color: var(--muted-color);
+    }
+
+    .empty-state i {
+        opacity: 0.7;
+    }
+    </style>
+
+    <%- include('partials/footer') %>
+    <%- include('partials/scripts') %>
 </body>
 </html>

@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="add-blog-page">
 <head>
-    <%- include('./partials/head') %>
-    <title>Add New Blog</title>
+    <%- include('partials/head') %>
+    <title>Create New Blog</title>
     <!-- TinyMCE Script -->
     
     <script src="https://cdn.tiny.cloud/1/34zhin37w93jjpzlgtn8cmwutl1pdyig1c8anvddr4qs8kvm/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
         tinymce.init({
             selector: '#blogBody', // ID of the textarea to replace
-            plugins: 'image code link lists video', // Add plugins for images, links, lists, etc.
-            toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code', // Customize toolbar
+            plugins: 'image code link lists video media', // Add plugins for images, links, lists, etc.
+            toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright | bullist numlist | link image media | code', // Customize toolbar
             height: 400, // Set editor height
-            images_upload_url: '/upload', // Endpoint for image uploads (see Step 3)
+            images_upload_url: '/upload-image', // Endpoint for image uploads
             images_upload_handler: function (blobInfo, success, failure) {
-                // Handle image uploads (see Step 3)
+                // Handle image uploads
                 const formData = new FormData();
                 formData.append('file', blobInfo.blob(), blobInfo.filename());
 
-                fetch('/upload', {
+                fetch('/upload-image', {
                     method: 'POST',
                     body: formData,
                 })
@@ -32,14 +32,61 @@
                 })
                 .catch(() => failure('Upload failed'));
             },
+            media_live_embeds: true,
+            video_template_callback: function(data) {
+                return '<video width="' + data.width + '" height="' + data.height + 
+                       '" controls="controls">\n' + '<source src="' + data.source + 
+                       '" type="' + data.sourcemime + '" />\n' + '</video>';
+            }
         });
     </script>
+    <style>
+        #mediaFilesContainer {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .media-preview {
+            display: flex;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            align-items: center;
+            background-color: #f9f9f9;
+        }
+        .media-preview img {
+            max-width: 100px;
+            max-height: 100px;
+            margin-right: 10px;
+        }
+        .media-preview .media-info {
+            flex-grow: 1;
+        }
+        .media-preview .media-remove {
+            margin-left: 10px;
+        }
+        .media-type-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .media-type-image { background-color: #28a745; color: white; }
+        .media-type-video { background-color: #dc3545; color: white; }
+        .media-type-audio { background-color: #007bff; color: white; }
+        .media-type-document { background-color: #6c757d; color: white; }
+        .media-type-other { background-color: #17a2b8; color: white; }
+    </style>
 </head>
 <body>
-    <%- include('./partials/nav') %>
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
     <div class="container mt-4">
         <h2>Add New Blog</h2>
-        <form action="/blog" method="post" enctype="multipart/form-data">
+        <form action="/blog" method="post" enctype="multipart/form-data" id="blogForm">
             <div class="mb-3">
                 <label for="title" class="form-label">Blog Title</label>
                 <input type="text" class="form-control" id="title" name="title" required>
@@ -57,18 +104,164 @@
             </div>
             <div class="mb-3">
                 <label for="coverImage" class="form-label">Cover Image</label>
-                <input type="file" class="form-control" id="coverImage" name="coverImage">
+                <input type="file" class="form-control" id="coverImage" name="coverImage" accept="image/*">
             </div>
+            
+            <!-- Media Files Upload Section -->
+            <div class="mb-3">
+                <label class="form-label">Media Files (Images, Videos, Documents, etc.)</label>
+                <div class="input-group">
+                    <input type="file" class="form-control" id="mediaFileInput" multiple>
+                    <button class="btn btn-outline-secondary" type="button" id="uploadMediaBtn">Upload</button>
+                </div>
+                <small class="text-muted">Supported types: Images, Videos, Audio, PDF, Documents, etc. Max size: 50MB per file.</small>
+                <div id="mediaFilesContainer"></div>
+                <!-- Hidden input to store uploaded media files data -->
+                <input type="hidden" id="mediaFilesData" name="mediaFiles">
+            </div>
+            
             <div class="mb-3">
                 <label for="blogBody" class="form-label">Blog Content</label>
-                <!-- Replace textarea with TinyMCE editor -->
                 <textarea id="blogBody" name="body" class="form-control"></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
-    <%- include('./partials/footer') %>
-    <%- include('./partials/scripts') %>
-
+    
+    <%- include('partials/footer') %>
+    <%- include('partials/scripts') %>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mediaFiles = [];
+            const mediaFilesContainer = document.getElementById('mediaFilesContainer');
+            const mediaFilesDataInput = document.getElementById('mediaFilesData');
+            
+            // Update hidden input with media files data
+            function updateMediaFilesData() {
+                mediaFilesDataInput.value = JSON.stringify(mediaFiles);
+            }
+            
+            // Display uploaded media files
+            function renderMediaFiles() {
+                mediaFilesContainer.innerHTML = '';
+                
+                if (mediaFiles.length === 0) {
+                    return;
+                }
+                
+                mediaFiles.forEach((file, index) => {
+                    const mediaItem = document.createElement('div');
+                    mediaItem.className = 'media-preview';
+                    
+                    let previewHTML = '';
+                    if (file.type && file.type.startsWith('image/')) {
+                        previewHTML = `<img src="${file.url}" alt="${file.name}">`;
+                    } else if (file.type && file.type.startsWith('video/')) {
+                        previewHTML = `
+                            <div style="width: 100px; height: 100px; position: relative; margin-right: 10px;">
+                                <video width="100" height="100" style="object-fit: cover;">
+                                    <source src="${file.url}" type="${file.type}">
+                                </video>
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                    <i class="fas fa-play-circle fa-2x" style="color: white; text-shadow: 0 0 3px rgba(0,0,0,0.7);"></i>
+                                </div>
+                            </div>
+                        `;
+                    } else if (file.type && file.type.startsWith('audio/')) {
+                        previewHTML = `<i class="fas fa-music fa-3x me-2"></i>`;
+                    } else {
+                        previewHTML = `<i class="fas fa-file-alt fa-3x me-2"></i>`;
+                    }
+                    
+                    mediaItem.innerHTML = `
+                        ${previewHTML}
+                        <div class="media-info">
+                            <span class="media-type-badge">${file.type ? file.type.split('/')[0] : 'file'}</span>
+                            <span class="fw-bold">${file.name}</span>
+                            <div class="text-muted small">${formatFileSize(file.size)}</div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger media-remove" data-index="${index}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    
+                    mediaFilesContainer.appendChild(mediaItem);
+                });
+                
+                // Add event listeners to remove buttons
+                document.querySelectorAll('.media-remove').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        mediaFiles.splice(index, 1);
+                        updateMediaFilesData();
+                        renderMediaFiles();
+                    });
+                });
+            }
+            
+            // Handle media file upload
+            document.getElementById('uploadMediaBtn').addEventListener('click', function() {
+                const fileInput = document.getElementById('mediaFileInput');
+                const files = fileInput.files;
+                
+                if (files.length === 0) {
+                    alert('Please select files to upload');
+                    return;
+                }
+                
+                const formData = new FormData();
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('mediaFiles', files[i]);
+                }
+                
+                // Show loading indicator
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+                this.disabled = true;
+                
+                fetch('/upload-media', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Add uploaded files to our array
+                        data.files.forEach(file => {
+                            mediaFiles.push(file);
+                        });
+                        updateMediaFilesData();
+                        renderMediaFiles();
+                        fileInput.value = ''; // Clear the file input
+                    } else {
+                        alert('Error uploading files: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while uploading files');
+                })
+                .finally(() => {
+                    // Reset button
+                    this.innerHTML = 'Upload';
+                    this.disabled = false;
+                });
+            });
+            
+            // Format file size to human-readable format
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            // Handle form submit
+            document.getElementById('blogForm').addEventListener('submit', function(e) {
+                updateMediaFilesData();
+            });
+        });
+    </script>
 </body>
 </html>

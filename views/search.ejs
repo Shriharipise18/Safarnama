@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" class="search-page">
+<head>
+    <%- include('partials/head') %>
+    <title>Search Users</title>
+    <style>
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .search-form {
+            margin-bottom: 30px;
+        }
+        
+        .search-input {
+            border-radius: 50px;
+            padding-left: 20px;
+        }
+        
+        .search-btn {
+            border-radius: 50px;
+            padding: 8px 25px;
+        }
+        
+        .user-card {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+        
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #007bff;
+            margin-right: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .user-card:hover .user-avatar {
+            transform: scale(1.1);
+            border-color: #0056b3;
+        }
+        
+        .user-info {
+            flex-grow: 1;
+        }
+        
+        .user-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+        
+        .user-email {
+            color: var(--muted-color);
+            font-size: 0.9rem;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 50px;
+            color: var(--muted-color);
+        }
+        
+        .follow-btn {
+            min-width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    
+    <div class="container mt-4">
+        <div class="search-container">
+            <h2 class="mb-4">Find People</h2>
+            
+            <!-- Search Form -->
+            <form action="/social/search" method="GET" class="search-form">
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        class="form-control search-input" 
+                        placeholder="Search by name or email..." 
+                        name="query"
+                        value="<%= query %>"
+                    >
+                    <button class="btn btn-primary search-btn" type="submit">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Search Results -->
+            <div class="search-results">
+                <% if (users && users.length > 0) { %>
+                    <h3 class="mb-3">Search Results (<%= users.length %>)</h3>
+                    
+                    <% users.forEach(searchUser => { %>
+                        <div class="user-card">
+                            <img src="<%= searchUser.profileImageURL %>" alt="<%= searchUser.fullName %>" class="user-avatar">
+                            
+                            <div class="user-info">
+                                <h4 class="user-name"><%= searchUser.fullName %></h4>
+                                <p class="user-email"><%= searchUser.email %></p>
+                            </div>
+                            
+                            <div class="user-actions">
+                                <a href="/social/user/<%= searchUser._id %>" class="btn btn-outline-primary me-2">
+                                    <i class="fas fa-user"></i> View Profile
+                                </a>
+                                
+                                <% if (locals.user) { %>
+                                    <button 
+                                        class="btn follow-btn <%= locals.user.following && locals.user.following.includes(searchUser._id) ? 'btn-danger' : 'btn-success' %>"
+                                        onclick="toggleFollow('<%= searchUser._id %>', this)">
+                                        <% if (locals.user.following && locals.user.following.includes(searchUser._id)) { %>
+                                            <i class="fas fa-user-minus"></i> Unfollow
+                                        <% } else { %>
+                                            <i class="fas fa-user-plus"></i> Follow
+                                        <% } %>
+                                    </button>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }) %>
+                    
+                <% } else if (query) { %>
+                    <div class="no-results">
+                        <i class="fas fa-search fa-3x mb-3"></i>
+                        <h4>No users found for "<%= query %>"</h4>
+                        <p>Try searching with a different name or email</p>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-5">
+                        <i class="fas fa-users fa-3x mb-3"></i>
+                        <h3>Search for people to follow</h3>
+                        <p>Enter a name or email to find users</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    
+    <%- include('partials/footer') %>
+    <%- include('partials/scripts') %>
+    
+    <script>
+        async function toggleFollow(userId, button) {
+            try {
+                const response = await fetch(`/social/follow/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.following) {
+                        // Now following
+                        button.classList.remove('btn-success');
+                        button.classList.add('btn-danger');
+                        button.innerHTML = '<i class="fas fa-user-minus"></i> Unfollow';
+                    } else {
+                        // Now unfollowed
+                        button.classList.remove('btn-danger');
+                        button.classList.add('btn-success');
+                        button.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
+                    }
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Something went wrong. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html> 

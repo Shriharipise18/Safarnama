@@ -1,22 +1,25 @@
-const { validateToken } = require("../services/authentication");
+const { validateToken } = require('../services/authentication');
 
-function checkForAuthenticationCookie(cookieName){
-    return (req , res , next)=>{
+function checkForAuthenticationCookie(cookieName) {
+    return (req, res, next) => {
         const tokenCookieValue = req.cookies[cookieName];
-        if(!tokenCookieValue){
-           return next();
-        }
         
-        try{
+        if (!tokenCookieValue) {
+            return next();
+        }
+
+        try {
             const userPayload = validateToken(tokenCookieValue);
             req.user = userPayload;
-            return next(); 
-        }catch(error){}
-           
-    }
-     
+        } catch (error) {
+            console.error('JWT verification error:', error);
+            res.clearCookie(cookieName);
+        }
+        
+        return next();
+    };
 }
 
-module.exports={
-    checkForAuthenticationCookie,
-}
+module.exports = {
+    checkForAuthenticationCookie
+};

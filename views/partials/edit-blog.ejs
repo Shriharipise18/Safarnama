@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%- include('./partials/head') %>
-    <title>Edit Blog</title>
+    <%- include('../partials/head') %>
+    <title>Edit Blog Post</title>
     <!-- TinyMCE Script -->
     <script src="https://cdn.tiny.cloud/1/34zhin37w93jjpzlgtn8cmwutl1pdyig1c8anvddr4qs8kvm/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
@@ -34,7 +34,8 @@
     </script>
 </head>
 <body>
-    <%- include('./partials/nav') %>
+    <%- include('../partials/header') %>
+    <%- include('../partials/nav') %>
     <div class="container mt-4">
         <h2>Edit Blog</h2>
         <form action="/update-blog/<%= blog._id %>" method="post" enctype="multipart/form-data">
@@ -67,6 +68,6 @@
             <button type="submit" class="btn btn-primary">Update Blog</button>
         </form>
     </div>
-    <%- include('./partials/scripts') %>
+    <%- include('../partials/scripts') %>
 </body>
 </html>

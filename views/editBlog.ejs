@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" class="edit-blog-page">
+<head>
+    <%- include('partials/head') %>
+    <title>Edit Blog Post</title>
+    <!-- TinyMCE Editor -->
+    <script src="https://cdn.tiny.cloud/1/34zhin37w93jjpzlgtn8cmwutl1pdyig1c8anvddr4qs8kvm/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <style>
+        .edit-blog-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .edit-form {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .current-cover {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .preview-container {
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .category-select {
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+        
+        .tox-tinymce {
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    
+    <div class="container edit-blog-container mt-5">
+        <div class="mb-4">
+            <a href="/blog/<%= blog._id %>" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Post
+            </a>
+        </div>
+        
+        <h2 class="text-center mb-4">Edit Blog Post</h2>
+        
+        <div class="edit-form">
+            <form action="/edit-blog/<%= blog._id %>" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="title" 
+                        name="title" 
+                        value="<%= blog.title %>" 
+                        required
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select class="form-control category-select" id="category" name="category" required>
+                        <option value="" disabled>Select a category</option>
+                        <option value="Technology" <%= blog.category === 'Technology' ? 'selected' : '' %>>Technology</option>
+                        <option value="Travel" <%= blog.category === 'Travel' ? 'selected' : '' %>>Travel</option>
+                        <option value="Food" <%= blog.category === 'Food' ? 'selected' : '' %>>Food</option>
+                        <option value="Lifestyle" <%= blog.category === 'Lifestyle' ? 'selected' : '' %>>Lifestyle</option>
+                        <option value="Fashion" <%= blog.category === 'Fashion' ? 'selected' : '' %>>Fashion</option>
+                        <option value="Other" <%= blog.category === 'Other' ? 'selected' : '' %>>Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Current Cover Image</label>
+                    <div class="preview-container">
+                        <% if (blog.coverImageURL) { %>
+                            <img src="<%= blog.coverImageURL %>" alt="<%= blog.title %>" class="current-cover">
+                        <% } else { %>
+                            <p class="text-muted">No cover image</p>
+                        <% } %>
+                    </div>
+                    
+                    <label for="coverImage">Change Cover Image (optional)</label>
+                    <input 
+                        type="file" 
+                        class="form-control" 
+                        id="coverImage" 
+                        name="coverImage" 
+                        accept="image/*"
+                    >
+                    <small class="text-muted">Leave empty to keep the current image</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="body">Content</label>
+                    <textarea 
+                        class="form-control" 
+                        id="body" 
+                        name="body" 
+                        rows="10" 
+                        required
+                    ><%= blog.body %></textarea>
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="/blog/<%= blog._id %>" class="btn btn-outline-danger">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <%- include('partials/footer') %>
+    <%- include('partials/scripts') %>
+    
+    <script>
+        // Initialize TinyMCE
+        tinymce.init({
+            selector: '#body',
+            height: 500,
+            plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste code help wordcount'
+            ],
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | removeformat | help',
+            content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 16px; }',
+            skin: (window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'oxide-dark' : 'oxide',
+            content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'default',
+            menubar: true,
+            branding: false,
+            setup: function(editor) {
+                editor.on('init', function() {
+                    console.log('Editor initialized');
+                    // Force editor to show content immediately
+                    editor.setContent(document.getElementById('body').value);
+                });
+            },
+            images_upload_url: '/upload-image',
+            images_upload_handler: function (blobInfo, success, failure) {
+                const formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+                fetch('/upload-image', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.location) {
+                        success(data.location);
+                    } else {
+                        failure('Upload failed');
+                    }
+                })
+                .catch(() => failure('Upload failed'));
+            },
+        });
+    </script>
+</body>
+</html> 

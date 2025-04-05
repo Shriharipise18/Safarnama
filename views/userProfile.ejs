@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" class="profile-page">
+<head>
+    <%- include('partials/head') %>
+    <title><%= profileUser.fullName %>'s Profile</title>
+    <style>
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #007bff;
+            margin-right: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-info {
+            flex-grow: 1;
+        }
+        
+        .profile-name {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+        
+        .profile-email {
+            font-size: 1rem;
+            color: var(--muted-color);
+            margin-bottom: 15px;
+        }
+        
+        .profile-bio {
+            margin-bottom: 15px;
+            font-style: italic;
+            color: var(--text-color);
+        }
+        
+        .profile-stats {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .stat-item {
+            margin-right: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--highlight-color);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--muted-color);
+        }
+        
+        .follow-btn {
+            min-width: 120px;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-avatar {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .profile-stats {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    
+    <div class="container mt-4">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <img src="<%= profileUser.profileImageURL %>" alt="<%= profileUser.fullName %>" class="profile-avatar">
+            
+            <div class="profile-info">
+                <h2 class="profile-name"><%= profileUser.fullName %></h2>
+                <p class="profile-email"><%= profileUser.email %></p>
+                
+                <% if (profileUser.bio && profileUser.bio.trim().length > 0) { %>
+                    <p class="profile-bio">"<%= profileUser.bio %>"</p>
+                <% } else { %>
+                    <p class="profile-bio text-muted">No bio provided</p>
+                <% } %>
+                
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-value"><%= profileUser.followers.length %></div>
+                        <div class="stat-label">
+                            <a href="/social/followers/<%= profileUser._id %>" class="text-decoration-none">Followers</a>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-value"><%= profileUser.following.length %></div>
+                        <div class="stat-label">
+                            <a href="/social/following/<%= profileUser._id %>" class="text-decoration-none">Following</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <% if (locals.user && locals.user._id.toString() !== profileUser._id.toString()) { %>
+                    <button 
+                        id="followBtn" 
+                        class="btn follow-btn <%= isFollowing ? 'btn-danger' : 'btn-success' %>"
+                        onclick="toggleFollow('<%= profileUser._id %>')">
+                        <% if (isFollowing) { %>
+                            <i class="fas fa-user-minus"></i> Unfollow
+                        <% } else { %>
+                            <i class="fas fa-user-plus"></i> Follow
+                        <% } %>
+                    </button>
+                <% } %>
+            </div>
+        </div>
+        
+        <!-- Content Tabs -->
+        <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="blogs-tab" data-bs-toggle="tab" data-bs-target="#blogs" type="button" role="tab" aria-controls="blogs" aria-selected="true">
+                    <i class="fas fa-newspaper"></i> Blogs
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="followers-tab" data-bs-toggle="tab" data-bs-target="#followers" type="button" role="tab" aria-controls="followers" aria-selected="false">
+                    <i class="fas fa-users"></i> Followers (<%= profileUser.followers.length %>)
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="following-tab" data-bs-toggle="tab" data-bs-target="#following" type="button" role="tab" aria-controls="following" aria-selected="false">
+                    <i class="fas fa-user-friends"></i> Following (<%= profileUser.following.length %>)
+                </button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="profileTabsContent">
+            <div class="tab-pane fade show active" id="blogs" role="tabpanel" aria-labelledby="blogs-tab">
+                <% if (userBlogs && userBlogs.length > 0) { %>
+                    <div class="row">
+                        <% userBlogs.forEach(blog => { %>
+                            <div class="col-md-6 mb-4">
+                                <div class="card blog-card h-100">
+                                    <img src="<%= blog.coverImageURL %>" class="card-img-top" alt="<%= blog.title %>" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><%= blog.title %></h5>
+                                        <p class="card-text">
+                                            <% 
+                                                // Remove HTML tags and limit length
+                                                const plainText = blog.body.replace(/<[^>]*>/g, '');
+                                                const excerpt = plainText.length > 100 ? plainText.substring(0, 100) + '...' : plainText;
+                                            %>
+                                            <%= excerpt %>
+                                        </p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <small class="text-muted">Posted on <%= new Date(blog.createdAt).toLocaleDateString() %></small>
+                                        <a href="/blog/<%= blog._id %>" class="btn btn-primary float-end">Read More</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-newspaper fa-3x mb-3"></i>
+                        <h4>No blog posts yet</h4>
+                        <p>This user hasn't written any blogs yet.</p>
+                    </div>
+                <% } %>
+            </div>
+            
+            <div class="tab-pane fade" id="followers" role="tabpanel" aria-labelledby="followers-tab">
+                <% if (profileUser.followers.length > 0) { %>
+                    <div class="row">
+                        <% profileUser.followers.forEach(follower => { %>
+                            <div class="col-md-6 mb-3">
+                                <div class="user-card d-flex align-items-center p-3">
+                                    <img src="<%= follower.profileImageURL %>" alt="<%= follower.fullName %>" class="user-avatar" style="width: 50px; height: 50px;">
+                                    <div class="ms-3">
+                                        <h5 class="mb-0"><%= follower.fullName %></h5>
+                                        <a href="/social/user/<%= follower._id %>" class="text-decoration-none">View Profile</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-users fa-3x mb-3"></i>
+                        <h4>No followers yet</h4>
+                        <p>When people follow this user, they will appear here.</p>
+                    </div>
+                <% } %>
+            </div>
+            
+            <div class="tab-pane fade" id="following" role="tabpanel" aria-labelledby="following-tab">
+                <% if (profileUser.following.length > 0) { %>
+                    <div class="row">
+                        <% profileUser.following.forEach(followee => { %>
+                            <div class="col-md-6 mb-3">
+                                <div class="user-card d-flex align-items-center p-3">
+                                    <img src="<%= followee.profileImageURL %>" alt="<%= followee.fullName %>" class="user-avatar" style="width: 50px; height: 50px;">
+                                    <div class="ms-3">
+                                        <h5 class="mb-0"><%= followee.fullName %></h5>
+                                        <a href="/social/user/<%= followee._id %>" class="text-decoration-none">View Profile</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-user-friends fa-3x mb-3"></i>
+                        <h4>Not following anyone yet</h4>
+                        <p>When this user follows people, they will appear here.</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    
+    <%- include('partials/footer') %>
+    <%- include('partials/scripts') %>
+    
+    <script>
+        async function toggleFollow(userId) {
+            try {
+                const followBtn = document.getElementById('followBtn');
+                const response = await fetch(`/social/follow/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update follower count without refreshing
+                    const followerCountElement = document.querySelector('.stat-value');
+                    const currentFollowerCount = parseInt(followerCountElement.textContent);
+                    
+                    if (data.following) {
+                        // Now following
+                        followBtn.classList.remove('btn-success');
+                        followBtn.classList.add('btn-danger');
+                        followBtn.innerHTML = '<i class="fas fa-user-minus"></i> Unfollow';
+                        followerCountElement.textContent = currentFollowerCount + 1;
+                    } else {
+                        // Now unfollowed
+                        followBtn.classList.remove('btn-danger');
+                        followBtn.classList.add('btn-success');
+                        followBtn.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
+                        followerCountElement.textContent = currentFollowerCount - 1;
+                    }
+                    
+                    // Update tab title with new count
+                    document.getElementById('followers-tab').innerHTML = 
+                        `<i class="fas fa-users"></i> Followers (${followerCountElement.textContent})`;
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Something went wrong. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html> 

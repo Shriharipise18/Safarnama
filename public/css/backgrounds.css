@@ -1,0 +1,134 @@
+/* Background Patterns CSS */
+:root {
+    /* Light Mode - Subtle Light Pattern */
+    --light-pattern: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%),
+                    linear-gradient(225deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%),
+                    linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%),
+                    linear-gradient(315deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%);
+    
+    /* Dark Mode - Subtle Dark Pattern */
+    --dark-pattern: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+                   linear-gradient(225deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+                   linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+                   linear-gradient(315deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%);
+}
+
+/* Light Theme Background - Default for all pages */
+body {
+    background-color: #f8f9fa;
+    background-image: var(--light-pattern), 
+                      linear-gradient(120deg, #e6f2ff 0%, #f8f9fa 100%);
+    background-size: 20px 20px, 100% 100%;
+    background-attachment: fixed;
+}
+
+/* Dark Theme Background - Default for all pages */
+[data-theme="dark"] body {
+    background-color: #121212;
+    background-image: var(--dark-pattern),
+                      linear-gradient(120deg, #0d1117 0%, #121212 100%);
+    background-size: 20px 20px, 100% 100%;
+    background-attachment: fixed;
+}
+
+/* Home Page Background - Light Theme */
+.home-page body {
+    background-image: var(--light-pattern),
+                      linear-gradient(135deg, #e6f2ff 0%, #f0f8ff 50%, #ebf5ff 100%);
+}
+
+/* Home Page Background - Dark Theme */
+.home-page[data-theme="dark"] body {
+    background-image: var(--dark-pattern),
+                      linear-gradient(135deg, #0d1117 0%, #121620 50%, #171c26 100%);
+}
+
+/* Blog Page Background - Light Theme */
+.blog-page body {
+    background-image: var(--light-pattern),
+                      linear-gradient(to right, #e6f2ff, #f0f8ff);
+}
+
+/* Blog Page Background - Dark Theme */
+.blog-page[data-theme="dark"] body {
+    background-image: var(--dark-pattern),
+                      linear-gradient(to right, #0d1117, #171a21);
+}
+
+/* Profile Page Background - Light Theme */
+.profile-page body {
+    background-image: var(--light-pattern),
+                      linear-gradient(45deg, #f0f7ff 0%, #f5f9ff 50%, #f9f9f9 100%);
+}
+
+/* Profile Page Background - Dark Theme */
+.profile-page[data-theme="dark"] body {
+    background-image: var(--dark-pattern),
+                      linear-gradient(45deg, #121619 0%, #161a21 50%, #1a1e27 100%);
+}
+
+/* Add Blog Page Background - Light Theme */
+.add-blog-page body {
+    background-image: var(--light-pattern),
+                      linear-gradient(to bottom, #f5f9ff 0%, #ffffff 100%);
+}
+
+/* Add Blog Page Background - Dark Theme */
+.add-blog-page[data-theme="dark"] body {
+    background-image: var(--dark-pattern),
+                      linear-gradient(to bottom, #111418 0%, #1a1d24 100%);
+}
+
+/* Signin/Signup Page Background - Light Theme */
+.auth-page body {
+    background-image: var(--light-pattern),
+                      linear-gradient(120deg, #e6f0ff 0%, #f5f9ff 50%, #f8fbff 100%);
+}
+
+/* Signin/Signup Page Background - Dark Theme */
+.auth-page[data-theme="dark"] body {
+    background-image: var(--dark-pattern),
+                      linear-gradient(120deg, #0e1216 0%, #151a22 50%, #1a2029 100%);
+}
+
+/* Glass Morphism Card Styles */
+.glass-card {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+}
+
+[data-theme="dark"] .glass-card {
+    background: rgba(18, 18, 18, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Container styling */
+.container.mt-4, .container.mt-5 {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .container.mt-4, 
+[data-theme="dark"] .container.mt-5 {
+    background: rgba(30, 30, 30, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}

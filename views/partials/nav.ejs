@@ -1,105 +1,107 @@
-<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">SAMACHAR 📰</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav">
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container">
+    <a class="navbar-brand fw-bold fs-4" href="/">Safarnama</a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <!-- Theme Toggle Button -->
+        <li class="nav-item theme-toggle-wrapper d-flex align-items-center me-3">
+          <button id="theme-toggle" class="theme-toggle rounded-pill">
+            <i class="fas fa-moon"></i>
+            <span>Dark Mode</span>
+          </button>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        
+        <% if (locals.user) { %>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Home</a>
+            <a class="nav-link" href="/blog/add-new">Write Blog</a>
           </li>
-          <% if (locals.user) { %>
-            <li class="nav-item">
-              <a class="nav-link" href="/blog/add-new">Add Blog</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <li class="nav-item">
+            <a class="nav-link" href="/social/search">Find People</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+              <% if (locals.user) { %>
+                <span class="avatar-wrapper">
+                  <img 
+                    src="<%= locals.user && locals.user.profileImageURL ? locals.user.profileImageURL : '/images/default.png' %>" 
+                    alt="<%= locals.user ? locals.user.fullName : 'User' %>" 
+                    style="width: 30px; height: 30px; object-fit: cover; border-radius: 50%; border: 2px solid #007bff; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"
+                    onerror="this.src='/images/default.png'">
+                </span>
                 <%= locals.user.fullName %>
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <li><a class="dropdown-item" href="user/logout">Log out</a></li>
-              </ul>
-            </li>
-          <% }else { %>
-            <li class="nav-item">
-              <a class="nav-link" href="/user/signup">Create Account</a>
-
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="/user/signin">Signin</a>
-            </li>
-
-            <% } %>
-          
-         
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-<% if(locals.error){ %>
-  <div class="container mt-4">
-    <div class="alert alert-danger" role="alert">
-      <%= locals.error %>
-    </div>
-  </div>
-  
-<% }
-%> -->
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <link rel="stylesheet" href="/css/scrp.css">
-     <a class="navbar-brand" href="/" style=" font-family: 'Mukta', 'Hind', sans-serif;
-     font-size: 36px;
-     font-weight: 600;">
-      वाक्चक्र:
-</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-          <ul class="navbar-nav me-auto">
-              <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="/">Home</a>
-              </li>
-              <% if (locals.user) { %>
-                <li class="nav-item">
-                  <a class="nav-link" href="/blog/add-new">Add Blog</a>
-              </li>
-              <% } %>
-          </ul>
-          <ul class="navbar-nav ms-auto">
-              <% if (locals.user) { %>
-                  <li class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                          <img src="/images/default.png" alt="Profile Photo" width="30" height="30" class="rounded-circle me-2">
-                          <span><%= locals.user.fullName %></span>
-                      </a>
-                      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                          <li><a class="dropdown-item" href="/profile">Profile</a></li>
-                          <li><a class="dropdown-item" href="/user/logout">Log out</a></li>
-                      </ul>
-                  </li>
               <% } else { %>
-                  <li class="nav-item">
-                      <a class="nav-link" href="/user/signup">Create Account</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link" href="/user/signin">Signin</a>
-                  </li>
+                <img 
+                  src="/images/avatar.avif" 
+                  alt="Profile" 
+                  class="profile-img-sm me-1"
+                  style="width: 30px; height: 30px; object-fit: cover; border-radius: 50%;">
               <% } %>
-          </ul>
-      </div>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+              <li><a class="dropdown-item" href="/profile/edit">Edit Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="/user/logout">Logout</a></li>
+            </ul>
+          </li>
+        <% } else { %>
+          <li class="nav-item">
+            <a class="nav-link" href="/user/signin">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user/signup">Register</a>
+          </li>
+        <% } %>
+      </ul>
+    </div>
   </div>
 </nav>
 
 <% if (locals.error) { %>
   <div class="container mt-4">
-      <div class="alert alert-danger" role="alert">
-          <%= locals.error %>
-      </div>
+    <div class="alert alert-danger" role="alert">
+      <%= locals.error %>
+    </div>
   </div>
 <% } %>
+
+<script>
+// Ensure navigation also responds to dark mode
+document.addEventListener('DOMContentLoaded', function() {
+    function updateNavbar() {
+        const theme = document.documentElement.getAttribute('data-theme');
+        const navbar = document.querySelector('.navbar');
+        
+        if (theme === 'dark') {
+            navbar.classList.remove('navbar-light', 'bg-light');
+            navbar.classList.add('navbar-dark', 'bg-dark');
+        } else {
+            navbar.classList.remove('navbar-dark', 'bg-dark');
+            navbar.classList.add('navbar-light', 'bg-light');
+        }
+    }
+    
+    // Apply initially
+    updateNavbar();
+    
+    // Listen for theme changes
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.attributeName === 'data-theme') {
+                updateNavbar();
+            }
+        });
+    });
+    
+    observer.observe(document.documentElement, { attributes: true });
+});
+</script>

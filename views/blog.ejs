@@ -1,57 +1,611 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%- include('./partials/head') %>
+    <%- include('partials/head') %>
     <title><%= blog.title %></title>
-    <link rel="stylesheet" href="/css/blog.css">
+    <style>
+        /* Professional Blog Page Styling */
+        .blog-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .blog-header {
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(var(--bs-primary-rgb), 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .blog-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+        
+        .blog-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: var(--muted-color);
+        }
+        
+        .blog-meta-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .blog-meta-item i {
+            margin-right: 6px;
+        }
+        
+        .blog-category {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: white;
+            margin-bottom: 15px;
+        }
+        
+        .blog-image-container {
+            position: relative;
+            margin: 30px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .blog-cover-image {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: cover;
+        }
+        
+        .blog-content {
+            margin: 30px 0;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+        
+        .blog-content p {
+            margin-bottom: 1.5rem;
+        }
+        
+        .blog-content a {
+            color: var(--primary);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s ease;
+        }
+        
+        .blog-content a:hover {
+            border-color: var(--primary);
+        }
+        
+        .blog-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        
+        .blog-actions {
+            display: flex;
+            gap: 15px;
+            margin: 40px 0;
+            padding-top: 20px;
+            border-top: 1px solid rgba(var(--bs-secondary-rgb), 0.2);
+        }
+        
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn i {
+            margin-right: 8px;
+        }
+        
+        .btn-like, .btn-dislike {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-like.active {
+            color: var(--bs-primary);
+            border-color: var(--bs-primary);
+            background-color: rgba(var(--bs-primary-rgb), 0.05);
+        }
+        
+        .btn-dislike.active {
+            color: var(--bs-danger);
+            border-color: var(--bs-danger);
+            background-color: rgba(var(--bs-danger-rgb), 0.05);
+        }
+        
+        .btn-comment {
+            background-color: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-comment:hover {
+            background-color: var(--bs-primary-darker);
+            border-color: var(--bs-primary-darker);
+            color: white;
+        }
+        
+        /* Comments section */
+        .comments-section {
+            margin: 40px 0;
+            padding-top: 30px;
+            border-top: 1px solid rgba(var(--bs-secondary-rgb), 0.2);
+        }
+        
+        .comments-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--text-color);
+        }
+        
+        .comment-form {
+            margin-bottom: 40px;
+        }
+        
+        .comment-input {
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 100px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .comment-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+        }
+        
+        .comment-card {
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .comment-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .comment-username {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .comment-time {
+            color: var(--muted-color);
+            font-size: 0.85rem;
+        }
+        
+        .comment-body {
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+        
+        .no-comments {
+            text-align: center;
+            padding: 30px;
+            color: var(--muted-color);
+            background-color: rgba(var(--bs-light-rgb), 0.5);
+            border-radius: 10px;
+        }
+        
+        .no-comments i {
+            display: block;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--muted-color);
+        }
+        
+        .author-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background-color: rgba(var(--bs-light-rgb), 0.5);
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+        
+        .author-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .author-info {
+            flex: 1;
+        }
+        
+        .author-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+        
+        .author-bio {
+            font-size: 0.9rem;
+            color: var(--muted-color);
+            margin-bottom: 10px;
+        }
+        
+        .related-blogs {
+            margin-top: 60px;
+        }
+        
+        .related-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--text-color);
+        }
+        
+        /* Dark mode enhancements */
+        [data-theme="dark"] .blog-image-container {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        [data-theme="dark"] .comment-card {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        [data-theme="dark"] .author-avatar {
+            border-color: var(--card-bg);
+        }
+        
+        [data-theme="dark"] .btn-like:not(.active), 
+        [data-theme="dark"] .btn-dislike:not(.active) {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Media Gallery Styles */
+        .media-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .media-item {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .media-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .media-preview.image img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .media-preview.video video,
+        .media-preview.audio audio {
+            display: block;
+            width: 100%;
+            border-radius: 8px;
+        }
+        
+        .document-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background-color: #f8f9fa;
+            transition: background-color 0.3s ease;
+            height: 100%;
+        }
+        
+        [data-theme="dark"] .document-card {
+            background-color: #2c2c2c;
+        }
+        
+        .document-card:hover {
+            background-color: #e9ecef;
+        }
+        
+        [data-theme="dark"] .document-card:hover {
+            background-color: #3c3c3c;
+        }
+    </style>
 </head>
 <body>
-    <%- include('./partials/nav') %>
-    <div class="container mt-4 blog-container">
-        <!-- Blog Title -->
-        <div class="container mt-4">
-            <p class="text-muted">Category: <span><%= blog.category %></span></p>
-            <h1><%= blog.title %></h1>
-            <img src="<%= blog.coverImageURL %>" width="60%" alt="">
-            <pre><%= blog.body %></pre>
-        </div>
-        <div class="mt-4 d-flex align-items-center">
-            <img src="/images/default.png" class="rounded-circle" width="60" alt="<%= blog.createdBy.fullName %>">
-            <div class="ms-3">
-                <h5><%= blog.createdBy.fullName %></h5>
-                <p class="text-muted mb-0">Author</p>
-            </div>
-        </div>
-        <div class="mt-4">
-            <h2>Comments (<%= comments.length %>)</h2>
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
 
-            
-            <% if (locals.user) { %>
-                <form action="/blog/comment/<%= blog._id %>" method="post">
-                    <div class="mb-3">
-                        <textarea class="form-control" name="content" placeholder="Enter your comment" rows="3" required></textarea>
+    <div class="container mt-5 mb-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Blog Header -->
+                <div class="blog-header mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <a href="/profile/<%= blog.createdBy._id %>" class="text-decoration-none">
+                                <img 
+                                    src="<%= blog.createdBy.profileImageURL || '/images/default.png' %>" 
+                                    alt="<%= blog.createdBy.fullName %>" 
+                                    class="rounded-circle me-3"
+                                    style="width: 50px; height: 50px; object-fit: cover;"
+                                    onerror="this.src='/images/default.png'">
+                            </a>
+                            <div>
+                                <h6 class="mb-0">
+                                    <a href="/profile/<%= blog.createdBy._id %>" class="text-decoration-none text-reset">
+                                        <%= blog.createdBy.fullName %>
+                                    </a>
+                                </h6>
+                                <p class="text-muted mb-0 small">
+                                    <%= new Date(blog.createdAt).toLocaleString('en-US', { 
+                                        day: 'numeric', 
+                                        month: 'short', 
+                                        year: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    }) %>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <% if (locals.user && blog.createdBy._id.toString() === locals.user._id.toString()) { %>
+                            <div class="blog-actions">
+                                <a href="/edit-blog/<%= blog._id %>" class="btn btn-sm btn-outline-primary me-2">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                            </div>
+                        <% } %>
                     </div>
-                    <button type="submit" class="btn btn-primary">Add Comment</button>
-                </form>
-            <% } %>
+                    
+                    <div class="blog-category mb-2">
+                        <span class="badge" style="background-color: <%= categoryColors[blog.category] || '#6c757d' %>;">
+                            <%= blog.category %>
+                        </span>
+                    </div>
+                    
+                    <h1 class="blog-title mb-4"><%= blog.title %></h1>
+                    
+                    <% if (blog.coverImageURL) { %>
+                        <div class="blog-cover-image mb-4">
+                            <img 
+                                src="<%= blog.coverImageURL %>" 
+                                alt="<%= blog.title %>" 
+                                class="img-fluid rounded shadow-sm"
+                                style="width: 100%; max-height: 500px; object-fit: cover;">
+                        </div>
+                    <% } %>
+                </div>
+                
+                <!-- Blog Content -->
+                <div class="blog-content mb-5">
+                    <div class="blog-body">
+                        <%- blog.body %>
+                    </div>
 
-            <!-- Comments List -->
-            <div class="mt-3">
-                <% comments.forEach(comment => { %>
-                    <div class="comment-container d-flex align-items-start mb-3 p-3 bg-light rounded">
-                        <img src="/images/default.png" class="rounded-circle me-3" width="50" alt="<%= comment.createdBy.fullName %>">
-                        <div>
-                            <strong><%= comment.createdBy.fullName %></strong>
-                            <p class="mb-0"><%= comment.content %></p>
-                            <small class="text-muted">Posted on <%= comment.createdAt.toLocaleDateString() %></small>
+                    <!-- Media Gallery - if blog has media files -->
+                    <% if (blog.mediaFiles && blog.mediaFiles.length > 0) { %>
+                        <div class="media-gallery mt-4">
+                            <h5 class="mb-3">Attached Media</h5>
+                            <div class="row g-3">
+                                <% blog.mediaFiles.forEach(function(file, index) { %>
+                                    <% if (file.type.startsWith('image/')) { %>
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="media-card">
+                                                <a href="<%= file.url %>" data-lightbox="blog-gallery" data-title="<%= file.name %>">
+                                                    <img src="<%= file.url %>" class="img-fluid rounded" alt="<%= file.name %>">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    <% } else if (file.type.startsWith('video/')) { %>
+                                        <div class="col-md-6">
+                                            <div class="media-card video-card">
+                                                <video controls class="img-fluid rounded w-100" preload="metadata">
+                                                    <source src="<%= file.url %>" type="<%= file.type %>">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                                <div class="media-info p-2">
+                                                    <span class="media-name fw-bold text-truncate d-block"><%= file.name %></span>
+                                                    <a href="<%= file.url %>" class="btn btn-sm btn-outline-primary mt-1" target="_blank" download>
+                                                        <i class="fas fa-download"></i> Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% } else if (file.type.startsWith('audio/')) { %>
+                                        <div class="col-md-6">
+                                            <div class="media-card audio-card p-3">
+                                                <audio controls class="w-100">
+                                                    <source src="<%= file.url %>" type="<%= file.type %>">
+                                                    Your browser does not support the audio element.
+                                                </audio>
+                                                <div class="media-info mt-2">
+                                                    <span class="media-name"><%= file.name %></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% } else { %>
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="media-card document-card p-3">
+                                                <a href="<%= file.url %>" class="document-link" target="_blank">
+                                                    <div class="document-icon">
+                                                        <i class="fas fa-file-alt fa-2x"></i>
+                                                    </div>
+                                                    <div class="media-info mt-2">
+                                                        <span class="media-name"><%= file.name %></span>
+                                                        <span class="media-size text-muted">
+                                                            <%= (file.size / 1024).toFixed(2) %> KB
+                                                        </span>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                <% }); %>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+                
+                <!-- Blog Engagement Section -->
+                <div class="blog-engagement border-top pt-4 mb-5">
+                    <div class="d-flex align-items-center gap-4">
+                        <!-- Like/Dislike -->
+                        <div class="blog-reactions">
+                            <form action="/blog/like/<%= blog._id %>" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-sm <%= blog.likes && blog.likes.includes(locals.user?._id) ? 'btn-primary' : 'btn-outline-primary' %> me-1">
+                                    <i class="<%= blog.likes && blog.likes.includes(locals.user?._id) ? 'fas fa-heart' : 'far fa-heart' %>"></i> 
+                                    <span class="ms-1"><%= blog.likes ? blog.likes.length : 0 %></span>
+                                </button>
+                            </form>
+                            
+                            <form action="/blog/dislike/<%= blog._id %>" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-sm <%= blog.dislikes && blog.dislikes.includes(locals.user?._id) ? 'btn-danger' : 'btn-outline-danger' %>">
+                                    <i class="<%= blog.dislikes && blog.dislikes.includes(locals.user?._id) ? 'fas fa-times-circle' : 'far fa-times-circle' %>"></i>
+                                    <span class="ms-1"><%= blog.dislikes ? blog.dislikes.length : 0 %></span>
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Comment Count -->
+                        <div class="blog-comments-count">
+                            <span class="text-muted">
+                                <i class="far fa-comment"></i> <%= comments.length %> Comments
+                            </span>
+                        </div>
+                        
+                        <!-- Share -->
+                        <div class="blog-share ms-auto">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-share-alt"></i> Share
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="https://twitter.com/intent/tweet?text=Check out this blog: <%= blog.title %>&url=https://yourblogsite.com/blog/<%= blog._id %>" target="_blank">
+                                    <i class="fab fa-twitter me-2"></i> Twitter
+                                </a>
+                                <a class="dropdown-item" href="https://www.facebook.com/sharer/sharer.php?u=https://yourblogsite.com/blog/<%= blog._id %>" target="_blank">
+                                    <i class="fab fa-facebook me-2"></i> Facebook
+                                </a>
+                                <a class="dropdown-item" href="https://www.linkedin.com/shareArticle?mini=true&url=https://yourblogsite.com/blog/<%= blog._id %>&title=<%= blog.title %>" target="_blank">
+                                    <i class="fab fa-linkedin me-2"></i> LinkedIn
+                                </a>
+                            </div>
                         </div>
                     </div>
-                <% }) %>
+                </div>
+                
+                <!-- Comments Section -->
+                <div class="comments-section">
+                    <h3 class="mb-4">Comments (<%= comments.length %>)</h3>
+                    
+                    <% if (locals.user) { %>
+                        <!-- Comment Form -->
+                        <div class="comment-form mb-5">
+                            <form action="/comment/<%= blog._id %>" method="POST">
+                                <div class="mb-3">
+                                    <textarea name="content" class="form-control" rows="3" placeholder="Write a comment..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Post Comment</button>
+                            </form>
+                        </div>
+                    <% } else { %>
+                        <div class="alert alert-info mb-5">
+                            <a href="/user/signin" class="alert-link">Sign in</a> to leave a comment.
+                        </div>
+                    <% } %>
+                    
+                    <!-- Comments List -->
+                    <div class="comments-list">
+                        <% if (comments.length === 0) { %>
+                            <div class="text-center empty-state py-5">
+                                <i class="far fa-comment-dots fa-3x mb-3 text-muted"></i>
+                                <p class="mb-0">No comments yet. Be the first to share your thoughts!</p>
+                            </div>
+                        <% } else { %>
+                            <% comments.forEach(function(comment) { %>
+                                <div class="comment-item mb-4 p-3 border rounded shadow-sm">
+                                    <div class="d-flex">
+                                        <img 
+                                            src="<%= comment.createdBy.profileImageURL || '/images/default.png' %>" 
+                                            alt="<%= comment.createdBy.fullName %>" 
+                                            class="rounded-circle me-3"
+                                            style="width: 40px; height: 40px; object-fit: cover;"
+                                            onerror="this.src='/images/default.png'">
+                                        <div class="w-100">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="mb-0"><%= comment.createdBy.fullName %></h6>
+                                                <small class="text-muted">
+                                                    <%= new Date(comment.createdAt).toLocaleString('en-US', { 
+                                                        day: 'numeric', 
+                                                        month: 'short', 
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    }) %>
+                                                </small>
+                                            </div>
+                                            <p class="mb-0"><%= comment.content %></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } %>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <%- include('./partials/footer') %>
-    <%- include('./partials/scripts') %>
-    
+
+    <%- include('partials/footer') %>
+    <%- include('partials/scripts') %>
 </body>
 </html>

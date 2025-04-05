@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" class="edit-profile-page">
+<head>
+    <%- include('partials/head') %>
+    <title>Edit Profile</title>
+    <style>
+        .edit-profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .profile-form {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 20px;
+            display: block;
+            border: 5px solid #007bff;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-preview-container {
+            position: relative;
+            width: 150px;
+            margin: 0 auto 30px;
+        }
+        
+        .upload-btn-wrapper {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+        
+        .upload-btn {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .save-btn {
+            padding: 10px 30px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+    <%- include('partials/nav') %>
+    
+    <div class="container edit-profile-container mt-5">
+        <h2 class="text-center mb-4">Edit Your Profile</h2>
+        
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i> <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
+        
+        <div class="profile-form">
+            <form action="/profile/update" method="POST" enctype="multipart/form-data">
+                <div class="profile-preview-container">
+                    <img 
+                        src="<%= user.profileImageURL %>" 
+                        alt="<%= user.fullName %>" 
+                        class="profile-preview" 
+                        id="profilePreview"
+                        onerror="this.onerror=null; this.src='/images/default.png'; document.getElementById('imgErrorMsg').style.display='block';"
+                    >
+                    <div id="imgErrorMsg" style="display:none; color:red; text-align:center; margin-top:5px;">
+                        <small>Image could not be loaded</small>
+                    </div>
+                    <div class="upload-btn-wrapper">
+                        <button type="button" class="btn btn-primary upload-btn" onclick="document.getElementById('profileImage').click()">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                        <input 
+                            type="file" 
+                            id="profileImage" 
+                            name="profileImage" 
+                            accept="image/*" 
+                            style="display: none;"
+                            onchange="previewImage(event)"
+                        >
+                    </div>
+                </div>
+                <div class="text-center mb-4">
+                    <small class="text-muted">Maximum file size: 10MB. Supported formats: JPEG, JPG, PNG, GIF</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="fullName" 
+                        name="fullName" 
+                        value="<%= user.fullName %>" 
+                        required
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input 
+                        type="email" 
+                        class="form-control" 
+                        id="email" 
+                        value="<%= user.email %>" 
+                        disabled
+                    >
+                    <small class="text-muted">Email cannot be changed</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="bio">Bio</label>
+                    <textarea 
+                        class="form-control" 
+                        id="bio" 
+                        name="bio" 
+                        rows="3"
+                    ><%= user.bio %></textarea>
+                </div>
+                
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary save-btn">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <%- include('partials/footer') %>
+    <%- include('partials/scripts') %>
+    
+    <script>
+        function previewImage(event) {
+            const file = event.target.files[0];
+            
+            // Check file size (10MB = 10 * 1024 * 1024 bytes)
+            if (file && file.size > 10 * 1024 * 1024) {
+                alert('File size exceeds 10MB. Please choose a smaller image.');
+                document.getElementById('profileImage').value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function() {
+                const preview = document.getElementById('profilePreview');
+                preview.src = reader.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    </script>
+</body>
+</html> 
