@@ -1,160 +1,136 @@
-Safarnama — Full-Stack Social Blogging Platform
+# Safarnama — Full-Stack Social Blogging Platform
 
-Safarnama is a production-oriented, full-stack blog application designed to demonstrate real-world web engineering skills.
+Safarnama is a **production-oriented, full-stack blog application** designed to demonstrate real-world web engineering skills.  
 It enables users to create rich multimedia blogs, interact socially with other writers, and authenticate securely using modern authentication standards.
 
-This project showcases end-to-end system design, secure authentication, media handling, and scalable backend architecture using industry-relevant technologies.
+This project showcases **end-to-end system design**, **secure authentication**, **media handling**, and **scalable backend architecture** using industry-relevant technologies.
 
-🔍 Why This Project Matters (For Recruiters)
+---
 
-✔ Real-world problem (content creation & social interaction)
-✔ Full-stack ownership (frontend, backend, database, auth)
-✔ Secure authentication (JWT + Google OAuth)
-✔ Media handling (images, video, audio)
-✔ Clean MVC architecture
-✔ Production-ready folder structure
-✔ Deployable and extensible
+## 🔍 Why This Project Matters (For Recruiters)
 
-This is not a tutorial project—it is a practical, extensible system.
+- ✔ Real-world problem (content creation & social interaction)
+- ✔ Full-stack ownership (frontend, backend, database, authentication)
+- ✔ Secure authentication (JWT + Google OAuth)
+- ✔ Media handling (images, video, audio)
+- ✔ Clean MVC architecture
+- ✔ Production-ready folder structure
+- ✔ Deployable and extensible
 
-🚀 Core Features
-📝 Rich Blogging System
+**This is not a tutorial project — it is a practical, extensible system.**
 
-Create and publish blogs with a WYSIWYG editor
+---
 
-Upload cover images
+## 🚀 Core Features
 
-Attach images, videos, and audio files
+### 📝 Rich Blogging System
+- Create and publish blogs using a **WYSIWYG editor**
+- Upload cover images
+- Attach images, videos, and audio files
+- Category-based blog organization
 
-Category-based blog organization
+### 👥 Social Platform Capabilities
+- Follow / unfollow bloggers
+- Like and dislike posts
+- Comment on blogs
+- View author profiles and activity
 
-👥 Social Platform Capabilities
+### 🔐 Authentication & Security
+- JWT-based authentication
+- Google OAuth 2.0 integration
+- Secure route protection via middleware
+- Role-based access handling
 
-Follow / unfollow bloggers
+### 🎯 User Experience
+- Dark / Light mode support
+- Responsive, modern UI
+- User dashboard with activity overview
+- Profile editing and account management
 
-Like and dislike posts
+---
 
-Comment on blogs
+## 🛠️ Technology Stack
 
-View author profiles and activity
+### Frontend
+- EJS (Server-Side Rendering)
+- HTML5
+- CSS3
+- Vanilla JavaScript
+- TinyMCE Rich Text Editor
 
-🔐 Authentication & Security
+### Backend
+- Node.js
+- Express.js
+- RESTful API architecture
 
-JWT-based authentication
+### Database
+- MongoDB
+- Mongoose ODM
 
-Google OAuth 2.0 integration
+### Authentication & Security
+- JWT (JSON Web Tokens)
+- Google OAuth (Passport.js)
+- Environment-based configuration
 
-Secure route protection via middleware
+---
 
-Role-based access handling
+## 🧱 Architecture Overview
 
-🎯 User Experience
+- MVC-based backend design
+- Middleware-driven authentication & authorization
+- Modular service layer for scalability
+- Clear separation of concerns
 
-Dark / Light mode support
 
-Responsive, modern UI
 
-User dashboard with activity overview
+---
 
-Profile editing and account management
-
-🛠️ Technology Stack
-Frontend
-
-EJS (Server-Side Rendering)
-
-HTML5, CSS3
-
-Vanilla JavaScript
-
-TinyMCE Rich Text Editor
-
-Backend
-
-Node.js
-
-Express.js
-
-RESTful API architecture
-
-Database
-
-MongoDB
-
-Mongoose ODM
-
-Authentication & Security
-
-JWT (JSON Web Tokens)
-
-Google OAuth (Passport.js)
-
-Environment-based configuration
-
-🧱 Architecture Overview
-
-MVC-based backend design
-
-Middleware-driven authentication & authorization
-
-Modular service layer for scalability
-
-Separation of concerns between routes, controllers, and models
-
-Client (EJS)
-   ↓
-Express Routes
-   ↓
-Controllers
-   ↓
-Services
-   ↓
-MongoDB (Mongoose)
-
-📂 Project Structure
+## 📂 Project Structure
 Safarnama/
 │
-├── config/          # DB, OAuth, JWT configuration
-├── controllers/     # Request handling logic
-├── middlewares/     # Auth & error middleware
-├── models/          # Mongoose schemas
-├── routes/          # API & view routes
-├── services/        # Business logic layer
-├── public/          # Static assets
-├── views/           # EJS templates
+├── config/ # DB, OAuth, JWT configuration
+├── controllers/ # Request handling logic
+├── middlewares/ # Authentication & error middleware
+├── models/ # Mongoose schemas
+├── routes/ # API & view routes
+├── services/ # Business logic layer
+├── public/ # Static assets
+├── views/ # EJS templates
 │
 ├── .env
 ├── index.js
 ├── package.json
 └── README.md
 
-⚙️ Local Setup
-Prerequisites
 
-Node.js (v14+)
+---
 
-MongoDB (local or Atlas)
+## ⚙️ Local Setup
 
-npm
+### Prerequisites
+- Node.js (v14 or higher)
+- MongoDB (local or MongoDB Atlas)
+- npm
 
-Installation
+### Installation
+
+```bash
 git clone https://github.com/Shriharipise18/Safarnama.git
 cd Safarnama
 npm install
-
 Environment Variables
+
+Create a .env file in the root directory:
+
 PORT=3000
 MONGO_URI=your_mongodb_uri
 JWT_SECRET=your_jwt_secret
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 
-Run
+Run the Application
 npm start
 
-
-Visit:
-http://localhost:3000
 
 📸 Application Screens
 
@@ -168,7 +144,7 @@ Follow system
 
 Comment & interaction system
 
-(Screenshots available in the repository)
+(Screenshots are available in the repository)
 
 🧪 Engineering Highlights
 
@@ -204,6 +180,19 @@ Shrihari Pise
 Full-Stack Developer (Node.js | MongoDB | Express)
 
 GitHub:
-👉 https://github.com/Shriharipise18
+https://github.com/Shriharipise18
 
 This project reflects hands-on experience in building production-grade web applications.
+
+
+If you want next, I can:
+- Convert this into **resume bullet points**
+- Add **API documentation**
+- Add **deployment instructions**
+- Prepare **interview explanation for this project**
+
+Visit the application at:
+
+http://localhost:3000
+
+
