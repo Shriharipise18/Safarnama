@@ -80,28 +80,58 @@ This project showcases **end-to-end system design**, **secure authentication**, 
 - Middleware-driven authentication & authorization
 - Modular service layer for scalability
 - Clear separation of concerns
-
+### System Overview
+<img src="public/SYS.png" alt="System Overview" width="900"/>
 
 
 ---
 
 ## 📂 Project Structure
+```text
 Safarnama/
-│
-├── config/ # DB, OAuth, JWT configuration
-├── controllers/ # Request handling logic
-├── middlewares/ # Authentication & error middleware
-├── models/ # Mongoose schemas
-├── routes/ # API & view routes
-├── services/ # Business logic layer
-├── public/ # Static assets
-├── views/ # EJS templates
-│
-├── .env
-├── index.js
-├── package.json
-└── README.md
+├── config/           # DB, OAuth, JWT configuration
+├── controllers/      # Request handling logic
+├── middlewares/      # Authentication & error middleware
+├── models/           # Mongoose schemas
+├── routes/           # API & view routes
+├── services/         # Business logic layer
+├── public/           # Static assets (CSS, images, JS)
+├── views/            # EJS templates
+├── .env              # Environment variables
+├── index.js          # Application entry point
+├── package.json      # Dependencies & scripts
+└── README.md         # Project documentation
 
+```
+
+
+---
+
+## 📸 Application Screens
+
+### Home Page
+<img src="public/HomePage.png" alt="Home Page" width="900"/>
+
+---
+
+### Add New Blog (Rich Media Editor)
+<img src="public/AddBlog.png" alt="Add Blog Page" width="900"/>
+
+---
+
+### Find People / Bloggers
+<img src="public/FindFriends.png" alt="Find People Page" width="900"/>
+
+---
+
+### Blog Feed & Interaction
+<img src="public/Favour.png" alt="Blog Feed" width="900"/>
+
+---
+
+### User Profile & Dashboard
+
+<img src="public/ProfilePage.png" alt="User Profile" width="900"/>
 
 ---
 
@@ -130,69 +160,35 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 
 Run the Application
 npm start
+```
+## 🧪 Engineering Highlights
 
+- Implemented JWT-based stateless authentication
+- Integrated Google OAuth for real-world SSO
+- Designed media upload pipelines for images, video, and audio
+- Used MongoDB schema relationships for social features
+- Implemented secure middleware chains
+- Built with scalability in mind
 
-📸 Application Screens
+---
 
-Blog creation with rich text editor
+## 👨‍💻 About the Developer
 
-Multimedia blog feed
-
-User dashboard
-
-Follow system
-
-Comment & interaction system
-
-(Screenshots are available in the repository)
-
-🧪 Engineering Highlights
-
-Implemented JWT-based stateless authentication
-
-Integrated Google OAuth for real-world SSO
-
-Designed media upload pipelines
-
-Used MongoDB schema relationships for social features
-
-Implemented secure middleware chains
-
-Built with scalability in mind
-
-📈 Potential Enhancements
-
-Notification system
-
-Blog analytics dashboard
-
-Bookmarking & saved posts
-
-Admin moderation panel
-
-Full-text search with indexing
-
-Cloud media storage (AWS S3 / Cloudinary)
-
-👨‍💻 About the Developer
-
-Shrihari Pise
+**Shrihari Pise**  
 Full-Stack Developer (Node.js | MongoDB | Express)
 
-GitHub:
+GitHub:  
 https://github.com/Shriharipise18
 
-This project reflects hands-on experience in building production-grade web applications.
+This project reflects hands-on experience in building **production-grade web applications**.
 
+---
 
-If you want next, I can:
-- Convert this into **resume bullet points**
-- Add **API documentation**
-- Add **deployment instructions**
-- Prepare **interview explanation for this project**
+## ▶️ Running the Application Locally
 
-Visit the application at:
+After starting the server, visit:
 
 http://localhost:3000
+
 
 
