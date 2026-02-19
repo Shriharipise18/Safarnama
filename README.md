@@ -1,194 +1,104 @@
-# Safarnama — Full-Stack Social Blogging Platform
+# 🌍 Safarnama: Your Ultimate Travel Companion
 
-Safarnama is a **production-oriented, full-stack blog application** designed to demonstrate real-world web engineering skills.  
-It enables users to create rich multimedia blogs, interact socially with other writers, and authenticate securely using modern authentication standards.
-
-This project showcases **end-to-end system design**, **secure authentication**, **media handling**, and **scalable backend architecture** using industry-relevant technologies.
+Safarnama is a feature-rich, community-driven travel blogging platform designed to empower travelers. Whether you're documenting your own journeys or looking for inspiration, Safarnama provides the tools to create, share, and connect in a modern, AI-enhanced environment.
 
 ---
 
-## 🔍 Why This Project Matters (For Recruiters)
+## 🚀 Key Features
 
-- ✔ Real-world problem (content creation & social interaction)
-- ✔ Full-stack ownership (frontend, backend, database, authentication)
-- ✔ Secure authentication (JWT + Google OAuth)
-- ✔ Media handling (images, video, audio)
-- ✔ Clean MVC architecture
-- ✔ Production-ready folder structure
-- ✔ Deployable and extensible
+### 🔐 Secure Authentication
+- **Multi-method Login**: Sign up or log in using local email/password or seamless OAuth integration with **Google** and **GitHub**.
+- **Secure Sessions**: Powered by JWT and Passport.js for a safe browsing experience.
 
-**This is not a tutorial project — it is a practical, extensible system.**
+### 🤖 AI-Powered Content Creation
+- **Instant Blog Generation**: Use the built-in AI to generate high-quality travel blogs.
+  - **From Topics**: Simply provide a keyword or title.
+  - **From PDFs**: Upload a travel brochure or document and let the AI extract the essence.
+  - **From Links**: Paste a URL to summarize and re-imagine travel articles.
+- **Content Editor**: A powerful editor with support for cover images and multimedia attachments.
 
----
+### 👥 Social & Community Interaction
+- **Personalized Profiles**: Showcase your travel stories and manage your content through a custom user dashboard.
+- **Social Connect**: Follow your favorite travelers to stay updated on their latest adventures.
+- **Engagement Tools**: Express yourself by liking or disliking posts and engaging in real-time discussion via comments.
 
-## 🚀 Core Features
-
-### 📝 Rich Blogging System
-- Create and publish blogs using a **WYSIWYG editor**
-- Upload cover images
-- Attach images, videos, and audio files
-- Category-based blog organization
-
-### 👥 Social Platform Capabilities
-- Follow / unfollow bloggers
-- Like and dislike posts
-- Comment on blogs
-- View author profiles and activity
-
-### 🔐 Authentication & Security
-- JWT-based authentication
-- Google OAuth 2.0 integration
-- Secure route protection via middleware
-- Role-based access handling
-
-### 🎯 User Experience
-- Dark / Light mode support
-- Responsive, modern UI
-- User dashboard with activity overview
-- Profile editing and account management
+### 💬 Real-time Communication
+- **P2P Chat**: Connect directly with other travelers to share tips and experiences.
+- **AI Travel Assistant**: A real-time chatbot (powered by Groq AI) available to answer your travel queries 24/7.
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ Tech Stack
 
-### Frontend
-- EJS (Server-Side Rendering)
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- TinyMCE Rich Text Editor
-
-### Backend
-- Node.js
-- Express.js
-- RESTful API architecture
-
-### Database
-- MongoDB
-- Mongoose ODM
-
-### Authentication & Security
-- JWT (JSON Web Tokens)
-- Google OAuth (Passport.js)
-- Environment-based configuration
-
----
-
-## 🧱 Architecture Overview
-
-- MVC-based backend design
-- Middleware-driven authentication & authorization
-- Modular service layer for scalability
-- Clear separation of concerns
-### System Overview
-<img src="public/SYS.png" alt="System Overview" width="900"/>
-
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB (Mongoose ODM)
+- **Frontend**: EJS (Embedded JavaScript Templates), Vanilla CSS
+- **AI Integration**: Groq AI
+- **Real-time**: Socket.io
+- **Security**: Helmet, JWT, Cookie-parser
+- **File Handling**: Multer
 
 ---
 
 ## 📂 Project Structure
+
 ```text
-Safarnama/
-├── config/           # DB, OAuth, JWT configuration
-├── controllers/      # Request handling logic
-├── middlewares/      # Authentication & error middleware
-├── models/           # Mongoose schemas
-├── routes/           # API & view routes
-├── services/         # Business logic layer
-├── public/           # Static assets (CSS, images, JS)
-├── views/            # EJS templates
-├── .env              # Environment variables
-├── index.js          # Application entry point
-├── package.json      # Dependencies & scripts
-└── README.md         # Project documentation
-
+├── config/             # Passport and configuration files
+├── gateway/            # Socket.io logic
+├── middlewares/        # Custom Express middlewares
+├── models/             # Mongoose schemas (User, Blog, Comment, Chat)
+├── public/             # Static assets (CSS, JS, Uploads, Images)
+├── routes/             # API and Page routes
+├── services/           # Business logic services
+├── views/              # EJS templates for the UI
+├── index.js            # Main entry point
+└── package.json        # Dependencies and scripts
 ```
 
+---
+
+## ⚙️ Installation & Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Shriharipise18/Safarnama.git
+   cd Safarnama
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Environment Variables**:
+   Create a `.env` file in the root directory and add the following:
+   ```env
+   PORT=8000
+   MONGO_URL=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   GEMINI_API_KEY=your_google_gemini_api_key
+   GOOGLE_CLIENT_ID=your_google_oauth_id
+   GOOGLE_CLIENT_SECRET=your_google_oauth_secret
+   GITHUB_CLIENT_ID=your_github_oauth_id
+   GITHUB_CLIENT_SECRET=your_github_oauth_secret
+   ```
+
+4. **Run the application**:
+   ```bash
+   # For development
+   npm run dev
+
+   # For production
+   npm start
+   ```
 
 ---
 
-## 📸 Application Screens
-
-### Home Page
-<img src="public/HomePage.png" alt="Home Page" width="900"/>
-
----
-
-### Add New Blog (Rich Media Editor)
-<img src="public/AddBlog.png" alt="Add Blog Page" width="900"/>
+## 🔮 Future Enhancements
+- **Interactive Maps**: Visualize travel routes directly on the blog.
+- **Offline Support**: Draft blogs even without an internet connection.
+- **Advanced Social Features**: Shareable travel itineraries and group trips.
 
 ---
 
-### Find People / Bloggers
-<img src="public/FindFriends.png" alt="Find People Page" width="900"/>
-
----
-
-### Blog Feed & Interaction
-<img src="public/Favour.png" alt="Blog Feed" width="900"/>
-
----
-
-### User Profile & Dashboard
-
-<img src="public/ProfilePage.png" alt="User Profile" width="900"/>
-
----
-
-## ⚙️ Local Setup
-
-### Prerequisites
-- Node.js (v14 or higher)
-- MongoDB (local or MongoDB Atlas)
-- npm
-
-### Installation
-
-```bash
-git clone https://github.com/Shriharipise18/Safarnama.git
-cd Safarnama
-npm install
-Environment Variables
-
-Create a .env file in the root directory:
-
-PORT=3000
-MONGO_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-
-Run the Application
-npm start
-```
-## 🧪 Engineering Highlights
-
-- Implemented JWT-based stateless authentication
-- Integrated Google OAuth for real-world SSO
-- Designed media upload pipelines for images, video, and audio
-- Used MongoDB schema relationships for social features
-- Implemented secure middleware chains
-- Built with scalability in mind
-
----
-
-## 👨‍💻 About the Developer
-
-**Shrihari Pise**  
-Full-Stack Developer (Node.js | MongoDB | Express)
-
-GitHub:  
-https://github.com/Shriharipise18
-
-This project reflects hands-on experience in building **production-grade web applications**.
-
----
-
-## ▶️ Running the Application Locally
-
-After starting the server, visit:
-
-http://localhost:3000
-
-
-
+Made with ❤️ for Travelers.
