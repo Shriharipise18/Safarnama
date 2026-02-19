@@ -7,26 +7,42 @@ const router = Router();
 router.get('/search', async (req, res) => {
     try {
         const { query } = req.query;
-        
+
+        // Fetch top 5 users by follower count
+        const topUsers = await User.aggregate([
+            {
+                $project: {
+                    fullName: 1,
+                    email: 1,
+                    profileImageURL: 1,
+                    followerCount: { $size: { $ifNull: ["$followers", []] } }
+                }
+            },
+            { $sort: { followerCount: -1 } },
+            { $limit: 5 }
+        ]);
+
         if (!query) {
             return res.render('search', {
                 users: [],
+                topUsers,
                 query: '',
                 user: req.user
             });
         }
-        
-        // Search users by fullName or email containing the query string
+
+        // Search users by fullName or email
         const users = await User.find({
             $or: [
-                { fullName: { $regex: query, $options: 'i' } }, // Case insensitive search
+                { fullName: { $regex: query, $options: 'i' } },
                 { email: { $regex: query, $options: 'i' } }
             ],
-            _id: { $ne: req.user?._id } // Exclude the current user from results
+            _id: { $ne: req.user?._id }
         });
-        
+
         return res.render('search', {
             users,
+            topUsers,
             query,
             user: req.user
         });
@@ -42,33 +58,33 @@ router.get('/user/:id', async (req, res) => {
         const profileUser = await User.findById(req.params.id)
             .populate('followers')
             .populate('following');
-        
+
         if (!profileUser) {
             return res.status(404).send('User not found');
         }
-        
+
         // Fetch blogs created by this user
         const userBlogs = await Blog.find({ createdBy: req.params.id })
             .populate('createdBy')
             .sort({ createdAt: -1 });
-            
+
         // Get fully populated current user if logged in
         let currentUser = null;
         let isFollowing = false;
-        
+
         if (req.user) {
             currentUser = await User.findById(req.user._id);
             // Make sure following is an array
             if (!currentUser.following) {
                 currentUser.following = [];
             }
-            
+
             // Check if current user is following this user
             isFollowing = profileUser.followers.some(
                 follower => follower._id.toString() === currentUser._id.toString()
             );
         }
-        
+
         return res.render('userProfile', {
             profileUser,
             userBlogs,
@@ -85,12 +101,12 @@ router.get('/user/:id', async (req, res) => {
 router.post('/follow/:id', async (req, res) => {
     try {
         if (!req.user) {
-            return res.status(401).json({ 
-                success: false, 
-                message: 'Authentication required' 
+            return res.status(401).json({
+                success: false,
+                message: 'Authentication required'
             });
         }
-        
+
         // Get the current user with full data
         const currentUser = await User.findById(req.user._id);
         if (!currentUser) {
@@ -99,46 +115,46 @@ router.post('/follow/:id', async (req, res) => {
                 message: 'Current user not found'
             });
         }
-        
+
         // Initialize following array if it doesn't exist
         if (!currentUser.following) {
             currentUser.following = [];
         }
-        
+
         const userToFollow = await User.findById(req.params.id);
         if (!userToFollow) {
-            return res.status(404).json({ 
-                success: false, 
-                message: 'User not found' 
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
             });
         }
-        
+
         // Initialize followers array if it doesn't exist
         if (!userToFollow.followers) {
             userToFollow.followers = [];
         }
-        
+
         // Check if already following
         const alreadyFollowing = userToFollow.followers.some(
             followerId => followerId.toString() === currentUser._id.toString()
         );
-        
+
         if (alreadyFollowing) {
             // Unfollow logic
             await User.findByIdAndUpdate(
                 req.params.id,
                 { $pull: { followers: currentUser._id } }
             );
-            
+
             await User.findByIdAndUpdate(
                 currentUser._id,
                 { $pull: { following: req.params.id } }
             );
-            
-            return res.json({ 
-                success: true, 
-                following: false, 
-                message: 'User unfollowed successfully' 
+
+            return res.json({
+                success: true,
+                following: false,
+                message: 'User unfollowed successfully'
             });
         } else {
             // Follow logic
@@ -146,23 +162,23 @@ router.post('/follow/:id', async (req, res) => {
                 req.params.id,
                 { $push: { followers: currentUser._id } }
             );
-            
+
             await User.findByIdAndUpdate(
                 currentUser._id,
                 { $push: { following: req.params.id } }
             );
-            
-            return res.json({ 
-                success: true, 
-                following: true, 
-                message: 'User followed successfully' 
+
+            return res.json({
+                success: true,
+                following: true,
+                message: 'User followed successfully'
             });
         }
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ 
-            success: false, 
-            message: 'Internal Server Error' 
+        return res.status(500).json({
+            success: false,
+            message: 'Internal Server Error'
         });
     }
 });
@@ -171,11 +187,11 @@ router.post('/follow/:id', async (req, res) => {
 router.get('/followers/:id', async (req, res) => {
     try {
         const profileUser = await User.findById(req.params.id).populate('followers');
-        
+
         if (!profileUser) {
             return res.status(404).send('User not found');
         }
-        
+
         // Get fully populated current user if logged in
         let currentUser = null;
         if (req.user) {
@@ -185,7 +201,7 @@ router.get('/followers/:id', async (req, res) => {
                 currentUser.following = [];
             }
         }
-        
+
         return res.render('followers', {
             profileUser: profileUser,
             followers: profileUser.followers,
@@ -201,11 +217,11 @@ router.get('/followers/:id', async (req, res) => {
 router.get('/following/:id', async (req, res) => {
     try {
         const profileUser = await User.findById(req.params.id).populate('following');
-        
+
         if (!profileUser) {
             return res.status(404).send('User not found');
         }
-        
+
         // Get fully populated current user if logged in
         let currentUser = null;
         if (req.user) {
@@ -215,7 +231,7 @@ router.get('/following/:id', async (req, res) => {
                 currentUser.following = [];
             }
         }
-        
+
         return res.render('following', {
             profileUser: profileUser,
             following: profileUser.following,

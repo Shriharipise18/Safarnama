@@ -1,5 +1,4 @@
 const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/user');
 const crypto = require('crypto');
 const { createTokenForUser } = require('../services/authentication');
@@ -9,99 +8,108 @@ const generatePassword = () => {
     return crypto.randomBytes(16).toString('hex');
 };
 
+const GitHubStrategy = require('passport-github2').Strategy;
+
 // Check if environment variables are properly configured
-const googleClientId = process.env.GOOGLE_CLIENT_ID;
-const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const githubClientId = process.env.GITHUB_CLIENT_ID;
+const githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
 
 console.log('Passport configuration:');
-console.log(`Google Client ID: ${googleClientId ? 'Available' : 'MISSING'}`);
-console.log(`Google Client Secret: ${googleClientSecret ? 'Available' : 'MISSING'}`);
+console.log(`GitHub Client ID: ${githubClientId ? 'Available' : 'MISSING'}`);
+console.log(`GitHub Client Secret: ${githubClientSecret ? 'Available' : 'MISSING'}`);
 
+console.log('Attempting to configure GitHub Strategy...');
 try {
-    // Only configure Google strategy if we have the required credentials
-    if (googleClientId && googleClientSecret) {
-        // Google OAuth Strategy
-        passport.use(new GoogleStrategy({
-            clientID: googleClientId,
-            clientSecret: googleClientSecret,
-            callbackURL: "/user/auth/google/callback",
-            proxy: true
+    // Only configure GitHub strategy if we have the required credentials
+    if (githubClientId && githubClientSecret && githubClientId !== 'YOUR_GITHUB_CLIENT_ID') {
+        console.log('Credentials found, registering GitHub Strategy...');
+        // GitHub OAuth Strategy
+        passport.use(new GitHubStrategy({
+            clientID: githubClientId,
+            clientSecret: githubClientSecret,
+            callbackURL: `${process.env.APP_URL || 'http://localhost:3000'}/user/auth/github/callback`,
+            scope: ['user:email']
         }, async (accessToken, refreshToken, profile, done) => {
             try {
-                console.log('Google auth profile received:', {
+                console.log('GitHub auth profile received:', {
                     id: profile.id,
-                    displayName: profile.displayName,
+                    username: profile.username,
                     emails: profile.emails ? 'Available' : 'Not available',
-                    photos: profile.photos ? 'Available' : 'Not available'
                 });
 
-                if (!profile.emails || !profile.emails.length) {
-                    console.error('No email found in Google profile');
-                    return done(new Error('No email found in Google profile'), null);
+                let email = null;
+                if (profile.emails && profile.emails.length > 0) {
+                    email = profile.emails[0].value;
+                } else {
+                    // Sometimes GitHub doesn't return public email, might need to handle this
+                    // For now, we'll error out if no email
+                    console.error('No email found in GitHub profile');
+                    return done(new Error('No email found in GitHub profile. Please ensure your GitHub email is public or verify it.'), null);
                 }
 
-                // Check if a user already exists with this Google ID or email
-                let user = await User.findOne({ 
+                // Check if a user already exists with this GitHub ID or email
+                let user = await User.findOne({
                     $or: [
-                        { googleId: profile.id },
-                        { email: profile.emails[0].value }
+                        { githubId: profile.id },
+                        { email: email }
                     ]
                 });
-                
+
                 if (user) {
-                    console.log('Existing user found for Google auth:', user.email);
-                    // If user exists but doesn't have googleId, update it
-                    if (!user.googleId) {
-                        user.googleId = profile.id;
-                        
-                        // Also update profile image if available
-                        if (profile.photos && profile.photos.length) {
+                    console.log('Existing user found for GitHub auth:', user.email);
+                    // If user exists but doesn't have githubId, update it
+                    if (!user.githubId) {
+                        user.githubId = profile.id;
+
+                        // Also update profile image if available and current one is default
+                        if (profile.photos && profile.photos.length && user.profileImageURL === '/images/default.png') {
                             user.profileImageURL = profile.photos[0].value;
                         }
-                        
+
                         await user.save();
-                        console.log('Updated existing user with Google ID');
+                        console.log('Updated existing user with GitHub ID');
                     }
                     return done(null, user);
                 } else {
-                    console.log('Creating new user for Google auth');
-                    // Create a new user with Google profile data
+                    console.log('Creating new user for GitHub auth');
+                    // Create a new user with GitHub profile data
                     const randomPassword = generatePassword();
-                    
+
                     const userData = {
-                        fullName: profile.displayName,
-                        email: profile.emails[0].value,
+                        fullName: profile.displayName || profile.username,
+                        email: email,
                         password: randomPassword,
-                        googleId: profile.id
+                        githubId: profile.id
                     };
-                    
+
                     // Add profile image if available
                     if (profile.photos && profile.photos.length) {
                         userData.profileImageURL = profile.photos[0].value;
                     }
-                    
+
                     console.log('New user data:', {
                         fullName: userData.fullName,
                         email: userData.email,
                         hasProfileImage: !!userData.profileImageURL
                     });
-                    
+
                     // Create user
                     user = await User.create(userData);
                     console.log('New user created with ID:', user._id);
-                    
+
                     return done(null, user);
                 }
             } catch (error) {
-                console.error('Error in Google auth strategy:', error);
+                console.error('Error in GitHub auth strategy:', error);
                 return done(error, null);
             }
         }));
+        console.log('GitHub Strategy registered successfully!');
     } else {
-        console.error('Google OAuth is DISABLED due to missing environment variables');
+        console.error('GitHub OAuth is DISABLED. Please set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET in .env');
     }
 } catch (error) {
-    console.error('Error setting up Google strategy:', error);
+    console.error('Error setting up GitHub strategy:', error);
 }
 
 // Serialize and deserialize user

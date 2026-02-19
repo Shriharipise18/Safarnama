@@ -3,12 +3,13 @@
 /* ==================== */
 body {
     font-family: 'Poppins', sans-serif;
-    background-image: url('/pc.jpg'); /* Ensure the path is correct */
+    background-image: url('/pc.jpg');
+    /* Ensure the path is correct */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    color: #fff; /* Ensuring text is visible */
+    color: var(--text-primary);
     margin: 0;
     padding: 0;
     display: flex;
@@ -24,13 +25,16 @@ body {
     max-width: 800px;
     margin: 20px auto;
     padding: 30px;
-    background: rgba(255, 255, 255, 0.05); /* Almost fully transparent */
+    background: var(--surface-color);
     border-radius: 16px;
-    backdrop-filter: blur(12px); /* Frosted glass effect */
-    -webkit-backdrop-filter: blur(12px); /* Safari support */
+    backdrop-filter: blur(12px);
+    /* Frosted glass effect */
+    -webkit-backdrop-filter: blur(12px);
+    /* Safari support */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease-in-out;
-    border: 2px solid rgba(255, 255, 255, 0.2); /* Very light transparent border */
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    /* Very light transparent border */
 }
 
 .container:hover {
@@ -44,21 +48,21 @@ body {
 .form-container {
     padding: 20px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.05); /* Even lighter background */
-    backdrop-filter: blur(8px);
+    background: var(--surface-color);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-.form-control, .form-select {
+.form-control,
+.form-select {
     width: 100%;
     padding: 14px;
     margin-bottom: 20px;
-    border: 2px solid rgba(255, 255, 255, 0.3); /* Light transparent border */
+    border: 2px solid var(--border-color);
     border-radius: 10px;
     font-size: 1rem;
-    background: rgba(255, 255, 255, 0.1); /* Slightly transparent */
+    background: var(--input-bg, #fff);
     transition: all 0.3s ease-in-out;
-    color: #fff; /* White text */
+    color: var(--text-primary);
 }
 
 .form-control::placeholder {
@@ -75,7 +79,8 @@ body {
 /* Transparent Button Styles        */
 /* ==================== */
 .btn-primary {
-    background: rgba(0, 123, 255, 0.4); /* Transparent button */
+    background: rgba(0, 123, 255, 0.4);
+    /* Transparent button */
     color: #fff;
     padding: 14px 30px;
     border: 2px solid rgba(255, 255, 255, 0.4);

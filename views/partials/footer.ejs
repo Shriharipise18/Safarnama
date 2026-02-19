@@ -1,62 +1,100 @@
-<link rel="stylesheet" href="/css/footer.css">
-<style>
-    /* Dark mode footer styles */
-    [data-theme="dark"] .footer {
-        background-color: #1a1a1a;
-        color: #f8f9fa;
-    }
-    
-    [data-theme="dark"] .footer-section h3 {
-        color: #5ea8ff;
-    }
-    
-    [data-theme="dark"] .footer-section.links ul li a {
-        color: #f8f9fa;
-    }
-    
-    [data-theme="dark"] .footer-section.links ul li a:hover {
-        color: #5ea8ff;
-    }
-    
-    [data-theme="dark"] .footer-section p {
-        color: #adb5bd;
-    }
-    
-    [data-theme="dark"] .footer-bottom {
-        background-color: #121212;
-        border-top-color: rgba(255, 255, 255, 0.1);
-        color: #adb5bd;
-    }
-</style>
+<% let footerCategories=['Technology', 'Lifestyle' , 'Travel' , 'Design' ]; if (typeof blogsByCategory !=='undefined' &&
+    blogsByCategory) { footerCategories=Object.keys(blogsByCategory).slice(0, 5); } else if (typeof locals
+    !=='undefined' && locals.blogsByCategory) { footerCategories=Object.keys(locals.blogsByCategory).slice(0, 5); } %>
 
-<footer class="footer mt-5">
-    <div class="container">
-        <div class="footer-content">
-            <div class="footer-section about">
-                <h3>About Us</h3>
-                <p>We are passionate about sharing knowledge and stories through blogs. Join us on this journey of creativity and inspiration.</p>
+    <footer>
+        <div class="container">
+            <div class="row g-4 justify-content-between">
+                <!-- Brand Section -->
+                <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                    <a href="/" class="d-flex align-items-center mb-3 text-decoration-none">
+                        <span class="fs-4 fw-bold text-primary">Safarnama</span>
+                    </a>
+                    <p class="text-secondary mb-4" style="max-width: 300px;">
+                        A community driven platform for sharing stories, ideas, and experiences. Join us today and start
+                        your journey.
+                    </p>
+                    <div class="d-flex gap-3 social-links">
+                        <a href="#"
+                            class="btn btn-outline-light text-secondary border-0 p-2 rounded-circle bg-light btn-social d-flex align-items-center justify-content-center"
+                            style="width: 36px; height: 36px;">
+                            <i data-lucide="twitter" class="icon-sm"></i>
+                        </a>
+                        <a href="#"
+                            class="btn btn-outline-light text-secondary border-0 p-2 rounded-circle bg-light btn-social d-flex align-items-center justify-content-center"
+                            style="width: 36px; height: 36px;">
+                            <i data-lucide="facebook" class="icon-sm"></i>
+                        </a>
+                        <a href="#"
+                            class="btn btn-outline-light text-secondary border-0 p-2 rounded-circle bg-light btn-social d-flex align-items-center justify-content-center"
+                            style="width: 36px; height: 36px;">
+                            <i data-lucide="instagram" class="icon-sm"></i>
+                        </a>
+                        <a href="#"
+                            class="btn btn-outline-light text-secondary border-0 p-2 rounded-circle bg-light btn-social d-flex align-items-center justify-content-center"
+                            style="width: 36px; height: 36px;">
+                            <i data-lucide="linkedin" class="icon-sm"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
+                    <h6 class="text-uppercase fw-bold mb-3 tracking-wider">Company</h6>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li><a href="/" class="text-secondary text-decoration-none footer-link">Home</a></li>
+                        <li><a href="/about" class="text-secondary text-decoration-none footer-link">About Us</a></li>
+                        <li><a href="/contact" class="text-secondary text-decoration-none footer-link">Contact</a></li>
+                        <li><a href="/privacy" class="text-secondary text-decoration-none footer-link">Privacy
+                                Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Categories -->
+                <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
+                    <h6 class="text-uppercase fw-bold mb-3 tracking-wider">Explore</h6>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <% footerCategories.forEach(function(cat) { %>
+                            <li><a href="/?category=<%= cat %>" class="text-secondary text-decoration-none footer-link">
+                                    <%= cat %>
+                                </a></li>
+                            <% }); %>
+                    </ul>
+                </div>
+
+                <!-- Newsletter/CTA -->
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="text-uppercase fw-bold mb-3 tracking-wider">Stay Updated</h6>
+                    <p class="text-secondary small mb-3">Subscribe to our newsletter for the latest stories and updates.
+                    </p>
+                    <form action="#" class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text border-end-0 bg-transparent py-0">
+                                <i data-lucide="mail" class="icon-sm"></i>
+                            </span>
+                            <input type="email" class="form-control form-control-sm border-start-0"
+                                placeholder="Email address" aria-label="Email address">
+                            <button class="btn btn-primary btn-sm px-3" type="button">
+                                <i data-lucide="send" class="icon-sm"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="footer-section links">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/blog">Blogs</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/contact">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-section social">
-                <h3>Follow Us</h3>
-                <div class="social-links">
-                    <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook"></i></a>
-                    <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
-                    <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
-                    <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin"></i></a>
+
+            <div class="row border-top mt-5 pt-4">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="text-secondary small mb-0">&copy; <%= new Date().getFullYear() %> Safarnama. All rights
+                            reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="text-secondary small mb-0">Designed with <i data-lucide="heart"
+                            class="text-danger icon-sm inline-icon"
+                            style="display: inline-block; vertical-align: middle;"></i> by Team
+                    </p>
                 </div>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2023 Your Blog Name. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
+    </footer>
+
+    <%- include('chatbot') %>

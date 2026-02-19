@@ -41,3 +41,6 @@ jspm_packages/
 # Windows files
 Thumbs.db
 ehthumbs.db 
+
+# Uploads
+public/uploads/

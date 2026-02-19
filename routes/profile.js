@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/user');
 const Blog = require('../models/blog');
 const Comment = require('../models/comments');
+const { createTokenForUser } = require('../services/authentication');
 const multer = require('multer');
 const path = require('path');
 
@@ -11,7 +12,7 @@ const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const uploadDir = path.resolve('./public/uploads/profiles');
         console.log('Upload directory:', uploadDir);
-        
+
         // Make sure the directory exists with proper permissions
         try {
             const fs = require('fs');
@@ -19,7 +20,7 @@ const storage = multer.diskStorage({
                 fs.mkdirSync(uploadDir, { recursive: true });
                 console.log('Created directory:', uploadDir);
             }
-            
+
             // Test if directory is writable
             try {
                 const testFile = path.join(uploadDir, 'test.txt');
@@ -32,7 +33,7 @@ const storage = multer.diskStorage({
         } catch (err) {
             console.error('Error with directory:', err);
         }
-        
+
         cb(null, uploadDir);
     },
     filename: function (req, file, cb) {
@@ -51,7 +52,7 @@ const upload = multer({
         const filetypes = /jpeg|jpg|png|gif/;
         const mimetype = filetypes.test(file.mimetype);
         const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-        
+
         if (mimetype && extname) {
             return cb(null, true);
         }
@@ -86,9 +87,9 @@ router.get('/', async (req, res) => {
         console.log('Blogs:', blogs); // Debugging
         console.log('Comments:', comments); // Debugging
 
-        // Render the profile page with user data, blogs, and comments
+        // Render the profile page with fresh user data from database
         return res.render('profile', {
-            user: req.user,
+            user: user, // Use the fresh 'user' object from User.findById
             blogs,
             comments,
         });
@@ -103,7 +104,7 @@ router.get('/edit', async (req, res) => {
     if (!req.user) {
         return res.redirect('/user/signin');
     }
-    
+
     try {
         const user = await User.findById(req.user._id);
         return res.render('editProfile', {
@@ -120,14 +121,14 @@ router.post('/update', (req, res) => {
     if (!req.user) {
         return res.redirect('/user/signin');
     }
-    
+
     // Handle the file upload with better error handling
     const uploadMiddleware = upload.single('profileImage');
-    
-    uploadMiddleware(req, res, async function(err) {
+
+    uploadMiddleware(req, res, async function (err) {
         if (err) {
             console.error('Upload error:', err);
-            
+
             // Handle multer errors
             if (err.code === 'LIMIT_FILE_SIZE') {
                 return res.status(400).render('editProfile', {
@@ -135,32 +136,32 @@ router.post('/update', (req, res) => {
                     error: 'File is too large. Maximum size is 10MB.'
                 });
             }
-            
+
             return res.status(400).render('editProfile', {
                 user: req.user,
                 error: 'Error uploading file: ' + err.message
             });
         }
-        
+
         try {
             const updateData = {
                 fullName: req.body.fullName,
                 bio: req.body.bio
             };
-            
+
             // If a new profile image was uploaded
             if (req.file) {
                 console.log('File info:', req.file);
-                
+
                 // Create a relative path that will work with express.static
                 // The profile image URL needs to be relative to the public directory
                 // since express.static serves files from there
                 const relativePath = '/uploads/profiles/' + req.file.filename;
                 updateData.profileImageURL = relativePath;
-                
+
                 console.log('Profile image path:', req.file.path);
                 console.log('Profile image URL set to:', updateData.profileImageURL);
-                
+
                 // Check if the file exists
                 const fs = require('fs');
                 if (fs.existsSync(req.file.path)) {
@@ -169,14 +170,19 @@ router.post('/update', (req, res) => {
                     console.error('Uploaded file does not exist at path:', req.file.path);
                 }
             }
-            
+
             const updatedUser = await User.findByIdAndUpdate(
                 req.user._id,
                 updateData,
                 { new: true }
             );
-            
+
             console.log('Updated user:', updatedUser);
+
+            // Re-generate token with new data and update cookie
+            const token = createTokenForUser(updatedUser);
+            res.cookie('token', token);
+
             return res.redirect('/profile');
         } catch (error) {
             console.error(error);

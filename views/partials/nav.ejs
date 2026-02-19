@@ -1,66 +1,69 @@
 <nav class="navbar navbar-expand-lg navbar-light">
   <div class="container">
     <a class="navbar-brand fw-bold fs-4" href="/">Safarnama</a>
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
-    
+
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <!-- Theme Toggle Button -->
         <li class="nav-item theme-toggle-wrapper d-flex align-items-center me-3">
-          <button id="theme-toggle" class="theme-toggle rounded-pill">
-            <i class="fas fa-moon"></i>
-            <span>Dark Mode</span>
+          <button id="theme-toggle" class="theme-toggle rounded-circle p-2" title="Toggle Theme">
+            <i data-lucide="moon" class="icon-md"></i>
           </button>
         </li>
-        
+
         <li class="nav-item">
-          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/"><i data-lucide="home" class="icon-md me-1"></i> Home</a>
         </li>
-        
+
         <% if (locals.user) { %>
           <li class="nav-item">
-            <a class="nav-link" href="/blog/add-new">Write Blog</a>
+            <a class="nav-link" href="/blog/add-new"><i data-lucide="plus-circle" class="icon-md me-1"></i> Write
+              Blog</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/social/search">Find People</a>
+            <a class="nav-link" href="/social/search"><i data-lucide="search" class="icon-md me-1"></i> Social</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/chat"><i data-lucide="mail" class="icon-md me-1"></i> Messages</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
               <% if (locals.user) { %>
                 <span class="avatar-wrapper">
-                  <img 
-                    src="<%= locals.user && locals.user.profileImageURL ? locals.user.profileImageURL : '/images/default.png' %>" 
-                    alt="<%= locals.user ? locals.user.fullName : 'User' %>" 
-                    style="width: 30px; height: 30px; object-fit: cover; border-radius: 50%; border: 2px solid #007bff; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"
-                    onerror="this.src='/images/default.png'">
+                  <img src="<%= locals.user.profileImageURL || '/images/default.png' %>"
+                    alt="<%= locals.user.fullName %>" class="profile-img-sm" onerror="this.src='/images/default.png'">
                 </span>
                 <%= locals.user.fullName %>
-              <% } else { %>
-                <img 
-                  src="/images/avatar.avif" 
-                  alt="Profile" 
-                  class="profile-img-sm me-1"
-                  style="width: 30px; height: 30px; object-fit: cover; border-radius: 50%;">
-              <% } %>
+                  <% } else { %>
+                    <img src="/images/default.png" alt="Profile" class="profile-img-sm me-1"
+                      style="width: 30px; height: 30px; object-fit: cover; border-radius: 50%;">
+                    <% } %>
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/profile">My Profile</a></li>
-              <li><a class="dropdown-item" href="/profile/edit">Edit Profile</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="/user/logout">Logout</a></li>
+              <li><a class="dropdown-item" href="/profile"><i data-lucide="user" class="icon-md me-2"></i> My
+                  Profile</a></li>
+              <li><a class="dropdown-item" href="/profile/edit"><i data-lucide="user-cog" class="icon-md me-2"></i> Edit
+                  Profile</a>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="/user/logout"><i data-lucide="log-out" class="icon-md me-2"></i>
+                  Logout</a></li>
             </ul>
           </li>
-        <% } else { %>
-          <li class="nav-item">
-            <a class="nav-link" href="/user/signin">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/user/signup">Register</a>
-          </li>
-        <% } %>
+          <% } else { %>
+            <li class="nav-item">
+              <a class="nav-link" href="/user/signin"><i data-lucide="log-in" class="icon-md me-1"></i> Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/user/signup"><i data-lucide="user-plus" class="icon-md me-1"></i> Register</a>
+            </li>
+            <% } %>
       </ul>
     </div>
   </div>
@@ -72,36 +75,36 @@
       <%= locals.error %>
     </div>
   </div>
-<% } %>
+  <% } %>
 
-<script>
-// Ensure navigation also responds to dark mode
-document.addEventListener('DOMContentLoaded', function() {
-    function updateNavbar() {
-        const theme = document.documentElement.getAttribute('data-theme');
-        const navbar = document.querySelector('.navbar');
-        
-        if (theme === 'dark') {
+    <script>
+      // Ensure navigation also responds to dark mode
+      document.addEventListener('DOMContentLoaded', function () {
+        function updateNavbar() {
+          const theme = document.documentElement.getAttribute('data-theme');
+          const navbar = document.querySelector('.navbar');
+
+          if (theme === 'dark') {
             navbar.classList.remove('navbar-light', 'bg-light');
             navbar.classList.add('navbar-dark', 'bg-dark');
-        } else {
+          } else {
             navbar.classList.remove('navbar-dark', 'bg-dark');
             navbar.classList.add('navbar-light', 'bg-light');
+          }
         }
-    }
-    
-    // Apply initially
-    updateNavbar();
-    
-    // Listen for theme changes
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
+
+        // Apply initially
+        updateNavbar();
+
+        // Listen for theme changes
+        const observer = new MutationObserver(function (mutations) {
+          mutations.forEach(function (mutation) {
             if (mutation.attributeName === 'data-theme') {
-                updateNavbar();
+              updateNavbar();
             }
+          });
         });
-    });
-    
-    observer.observe(document.documentElement, { attributes: true });
-});
-</script>
+
+        observer.observe(document.documentElement, { attributes: true });
+      });
+    </script>

@@ -1,0 +1,47 @@
+<!-- Floating Chatbot Toggle Button -->
+<button class="bot-toggle-btn shadow-lg" id="botToggleBtn" title="Chat with Safarnama AI">
+    <i data-lucide="message-circle" class="icon-lg"></i>
+</button>
+
+<!-- Chatbot UI Container -->
+<div class="bot-container shadow-lg d-none" id="botContainer">
+    <div class="bot-header">
+        <div class="bot-title">
+            <i data-lucide="bot" class="me-2 icon-md"></i>
+            Safarnama AI Assistant
+        </div>
+        <button id="botCloseBtn" class="bot-close-btn">
+            <i data-lucide="x" class="icon-md"></i>
+        </button>
+    </div>
+
+    <div class="bot-messages" id="botMessages">
+        <div class="bot-message assistant">
+            <img src="/images/ai-avatar.svg" alt="Bot" class="bot-avatar-sm">
+            <div class="msg-content">
+                Hi! I'm your Safarnama travel assistant. Need help with trip ideas or how to use the site? Ask me
+                anything!
+            </div>
+        </div>
+    </div>
+
+    <div class="bot-input-area">
+        <div class="bot-typing-indicator d-none" id="botTyping">
+            <span></span><span></span><span></span>
+        </div>
+        <form id="botForm" class="d-flex gap-2">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent py-0">
+                    <i data-lucide="message-square" class="icon-sm"></i>
+                </span>
+                <input type="text" id="botInput" class="form-control border-start-0" placeholder="Type a message..."
+                    autocomplete="off">
+            </div>
+            <button type="submit" class="btn btn-primary px-3">
+                <i data-lucide="send" class="icon-md"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script src="/js/bot.js" defer></script>
