@@ -26,7 +26,10 @@ mongoose.connect(mongoUrl)
 
 // Ensure upload directories exist
 const fs = require('fs');
-const uploadDirs = ['./public/uploads', './public/uploads/profiles'];
+const uploadDirs = [
+    path.join(__dirname, 'public/uploads'),
+    path.join(__dirname, 'public/uploads/profiles')
+];
 uploadDirs.forEach(dir => {
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
@@ -173,7 +176,7 @@ app.use('/comment', commentRoute);
 // })
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, path.resolve('./public/uploads/')); // Save images in the "uploads" folder
+        cb(null, path.join(__dirname, 'public/uploads/')); // Save images in the "uploads" folder
     },
     filename: function (req, file, cb) {
         const fileName = `${Date.now()}-${file.originalname}`;
