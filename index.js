@@ -24,6 +24,16 @@ mongoose.connect(mongoUrl)
     .then((e) => console.log("MongoDB Connected"))
     .catch(err => console.error("MongoDB Connection Error:", err));
 
+// Ensure upload directories exist
+const fs = require('fs');
+const uploadDirs = ['./public/uploads', './public/uploads/profiles'];
+uploadDirs.forEach(dir => {
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+        console.log(`Created directory: ${dir}`);
+    }
+});
+
 const Blog = require('./models/blog')
 const User = require('./models/user')
 
