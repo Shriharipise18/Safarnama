@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('./partials/head') %>
+        <title>Error - Safarnama</title>
+        <style>
+            .error-container {
+                min-height: 70vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 20px;
+            }
+
+            .error-card {
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 20px;
+                padding: 40px;
+                max-width: 600px;
+                width: 100%;
+            }
+
+            .error-code {
+                font-size: 80px;
+                font-weight: 800;
+                background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 10px;
+            }
+
+            .error-message {
+                font-size: 24px;
+                color: var(--text-color);
+                margin-bottom: 20px;
+            }
+
+            .error-stack {
+                text-align: left;
+                background: #1a1a1a;
+                color: #ff4d4d;
+                padding: 15px;
+                border-radius: 10px;
+                font-family: monospace;
+                font-size: 12px;
+                overflow-x: auto;
+                margin-top: 20px;
+            }
+
+            .back-home {
+                display: inline-block;
+                margin-top: 30px;
+                padding: 12px 30px;
+                background: var(--primary-color);
+                color: white;
+                text-decoration: none;
+                border-radius: 30px;
+                transition: transform 0.2s;
+            }
+
+            .back-home:hover {
+                transform: scale(1.05);
+                color: white;
+            }
+        </style>
+</head>
+
+<body>
+    <%- include('./partials/nav') %>
+
+        <div class="container error-container">
+            <div class="error-card">
+                <div class="error-code">
+                    <%= error.statusCode || 500 %>
+                </div>
+                <h1 class="error-message">
+                    <%= error.message %>
+                </h1>
+                <p class="opacity-75">Something went wrong on our end. Please try again later.</p>
+
+                <% if (error.stack) { %>
+                    <div class="error-stack">
+                        <pre><%= error.stack %></pre>
+                    </div>
+                    <% } %>
+
+                        <a href="/" class="back-home">
+                            <i data-lucide="home" class="me-2" style="width: 18px; height: 18px;"></i>
+                            Back to Home
+                        </a>
+            </div>
+        </div>
+
+        <%- include('./partials/footer') %>
+            <%- include('./partials/scripts') %>
+</body>
+
+</html>
