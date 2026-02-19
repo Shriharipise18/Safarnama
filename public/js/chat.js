@@ -112,9 +112,16 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.conversation-item').forEach(el => el.classList.remove('active'));
         document.querySelector(`.conversation-item[data-id="${id}"]`)?.classList.add('active');
 
+        // Show chat window on mobile
+        const chatLayout = document.querySelector('.chat-layout');
+        if (chatLayout) chatLayout.classList.add('chat-open');
+
         // Setup Chat Window
         chatWindow.innerHTML = `
             <div class="chat-header">
+                <button class="back-btn" id="backToList">
+                    <i data-lucide="chevron-left"></i>
+                </button>
                 <img src="${participant.fullName.includes('Safarnama AI') ? '/images/ai-avatar.svg' : (participant.profileImageURL || '/images/default.png')}" class="profile-img-sm" style="width: 40px; height: 40px;" onerror="this.src='/images/default.png'">
                 <div>
                     <h6 class="mb-0">${participant.fullName}</h6>
@@ -140,6 +147,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 </form>
             </div>
         `;
+
+        // Handle back button
+        const backBtn = document.getElementById('backToList');
+        if (backBtn) {
+            backBtn.onclick = () => {
+                chatLayout.classList.remove('chat-open');
+                currentConversationId = null;
+                // Optional: remove active class from list
+                document.querySelectorAll('.conversation-item').forEach(el => el.classList.remove('active'));
+            };
+        }
 
         // Re-initialize Lucide icons for the new HTML
         if (typeof lucide !== 'undefined') {
